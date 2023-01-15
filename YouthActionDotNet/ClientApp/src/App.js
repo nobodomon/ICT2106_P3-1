@@ -14,6 +14,7 @@ import logoutImg from "./Assets/nav/logout.png";
 
 import Users from './Pages/Users';
 import ServiceCenters from './Pages/Employee/ServiceCenters';
+import Employee from './Pages/Employee/Employee';
 
 /* function getToken() {  
   const tokenString = sessionStorage.getItem('token');
@@ -83,7 +84,7 @@ export default function App() {
               <Route path="/" element={<Users user={token}/>}/>
               <Route path="/ServiceCenters" element={<ServiceCenters user={token}/>}/>
               <Route path="/Logout" element={<Logout logout={logout}></Logout>}/>
-              <Route path="/Employee" element={<Employee employee={employee}></Employee>}/>
+              <Route path="/Employee" element={<Employee employee={Employee}></Employee>}/>
             </Routes>
           </header>
         </div>

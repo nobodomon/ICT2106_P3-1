@@ -1,6 +1,5 @@
-import React from "react"
 import DatapageLayout from "../PageLayout"
-
+import React, {useState, useEffect} from 'react';
 
 function Clock(){
     //this is a hook 
