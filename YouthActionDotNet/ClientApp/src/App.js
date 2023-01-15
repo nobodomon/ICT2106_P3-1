@@ -74,6 +74,7 @@ export default function App() {
               <DrawerSection label={"Modules"}>
                 <DrawerItem label="Users" to={"/"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Service Center" to={"/ServiceCenters"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="Employee" to={"/Employee"} logo={userImg}></DrawerItem>
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
@@ -82,6 +83,7 @@ export default function App() {
               <Route path="/" element={<Users user={token}/>}/>
               <Route path="/ServiceCenters" element={<ServiceCenters user={token}/>}/>
               <Route path="/Logout" element={<Logout logout={logout}></Logout>}/>
+              <Route path="/Employee" element={<Employee employee={employee}></Employee>}/>
             </Routes>
           </header>
         </div>
