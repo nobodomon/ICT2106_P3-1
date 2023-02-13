@@ -69,6 +69,19 @@ namespace YouthActionDotNet.Controllers
             return await employeeControl.All();
         }
 
+        [HttpGet("All/{page}/pageSize={pageSize}")]
+        public async Task<ActionResult<string>> All(
+            int page, int pageSize)
+        {
+            return await employeeControl.AllInPages(null, null,page, pageSize);
+        }
+
+        [HttpGet("Count")]
+        public async Task<ActionResult<string>> Count()
+        {
+            return await employeeControl.Count();
+        }
+
         [HttpGet("Settings")]
         public string Settings()
         {
