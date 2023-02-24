@@ -22,6 +22,7 @@ import Donations from './Pages/Donor/Donations';
 import ServiceCenters from './Pages/Employee/ServiceCenters';
 import VolunteerWork from './Pages/Volunteer/VolunteerWork';
 import Project from './Pages/Project/Project';
+import Report from './Pages/Report/Report';
 import Expense from './Pages/Expense/Expense';
 import Permissions from './Pages/Admin/Permissions';
 
