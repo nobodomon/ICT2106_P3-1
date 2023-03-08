@@ -19,6 +19,9 @@ export default class Employees extends React.Component {
         textColor: "#ffffff",
         textColorInvert: "#606060",
         api: "/api/Employee/",
+
+        
+        overviewUrl : "/api/Employee/All"
     }
 
     async componentDidMount(){

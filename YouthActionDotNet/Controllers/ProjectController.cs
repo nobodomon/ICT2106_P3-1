@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -71,6 +72,18 @@ namespace YouthActionDotNet.Controllers
         public async Task<ActionResult<string>> All()
         {
             return await projectControl.All();
+        }
+
+        //Search by tags 
+        // to put in all controller
+        [HttpPost("All")]
+        public async Task<ActionResult<string>> All([FromBody] SearchRequest request)
+        {
+            List<Tag> tags = request.data;
+            int page = request.pageData.page;
+            int pageSize = request.pageData.pageSize;
+            
+            return await projectControl.AllInPages(tags, null, page, pageSize);
         }
 
         [HttpGet("Settings")]

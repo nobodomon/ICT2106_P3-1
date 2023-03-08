@@ -85,16 +85,18 @@ namespace YouthActionDotNet.DAL
         }
 
 
-        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null,
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(List<Tag> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "")
         {
             IQueryable<TEntity> query = dbSet;
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
+            if(filter != null){
+                foreach(var tag in filter){
+                    query = query.Where(x => x.GetType().GetProperty(tag.type).GetValue(x).ToString().Contains(tag.value));
+                }
             }
+
 
             foreach (var includeProperty in includeProperties.Split
                 (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
@@ -113,16 +115,33 @@ namespace YouthActionDotNet.DAL
         }
 
 
-        public virtual async Task<IEnumerable<TEntity>> GetAllInPagesAsync(Expression<Func<TEntity, bool>> filter = null,
+        public virtual async Task<IEnumerable<TEntity>> GetAllInPagesAsync(List<Tag> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "", int page = 1 , int pageSize = 10)
         {
             IQueryable<TEntity> query = dbSet;
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
+            if(filter != null){
+                foreach(var tag in filter){
+                    string columnName = tag.type;
+                    string value = tag.value;
+
+                    ParameterExpression param = Expression.Parameter(typeof(TEntity), "x");
+                    MemberExpression member = Expression.Property(param, columnName);
+                    ConstantExpression constant = Expression.Constant(value);
+
+                    var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+
+                    var someValue = Expression.Constant(value, typeof(string));
+                    
+                    var containsMethodExp = Expression.Call(member, containsMethod, someValue);
+
+                    var lambda = Expression.Lambda<Func<TEntity, bool>>(containsMethodExp, param);
+
+                    query = query.Where(lambda);
+                }
             }
+
 
             foreach (var includeProperty in includeProperties.Split
                 (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))

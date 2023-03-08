@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using YouthActionDotNet.Models;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Control;
+using System.Linq.Expressions;
 
 namespace YouthActionDotNet.Controllers
 {
@@ -74,6 +75,14 @@ namespace YouthActionDotNet.Controllers
             int page, int pageSize)
         {
             return await employeeControl.AllInPages(null, null,page, pageSize);
+        }
+
+        //Search by tags
+        [HttpPost("All")]
+        public async Task<ActionResult<string>> All([FromBody] List<Tag> tags, int page, int pageSize)
+        {
+            
+            return await employeeControl.AllInPages(tags, null, page, pageSize);
         }
 
         [HttpGet("Count")]

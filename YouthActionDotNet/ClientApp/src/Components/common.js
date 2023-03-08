@@ -243,103 +243,23 @@ export class SearchBar extends React.Component {
                         <SearchTags showEdit={false} onCancelClick={this.onCancelClick} type={this.state.tagType}>{this.state.selectedTag}</SearchTags>
                     }
                     <div className={"d-flex align-items-center " + this.state.inputClasses} onAnimationEnd={this.focus}>
-                        <input type={"text"} className={"SearchField"} placeholder={this.state.placeholder} ref={this.searchInput} onChange={this.handleSearchQueryChange} onKeyDown={(e) => this.handleKeydown(e, { type: this.state.tagType, value: this.state.selectedTag + "(" + this.searchInput.current.value + ")" })}></input>
+                        <input
+                        type={"text"}
+                        className={"SearchField"}
+                        placeholder={this.state.placeholder}
+                        ref={this.searchInput} 
+                        onChange={this.handleSearchQueryChange}
+                        onKeyDown={(e) => this.handleKeydown(e, { type: this.state.tagType, value: this.searchInput.current.value })}></input>
                         {this.state.selectedTag === "" &&
                             <div className={"dropdown "} style={{ "--maxItems": 5, "gridTemplateColumns": ["@", ":", "+", "#"].includes(this.state.searchQuery[0]) ? "1fr" : "" }}>
-                                {(this.state.searchQuery[0] === ":" || !["@", ":", "+", "#"].includes(this.state.searchQuery[0]) || this.state.searchQuery === "") &&
-                                    <div className="macros">
-                                        <div className="d-flex tagDescListTile macros">
-                                            <div className="icon macros">
-                                                :
-                                            </div>
-                                            <div className="tagDesc macros">
-                                                <h6 className="macros">:MacroName</h6>
-                                                <p>
-                                                    Predefined macros for quick and easy search filtering.
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {this.state.macrosSuggestion.length === 0 ?
-                                            <div className="noMacrosPlaceHolder">
-                                                There are no macros created. Click below to create a new macro.
-                                                <StdButton onClick={() => this.props.toggleTagMacros("tm")} className={"primary"}>Create New Macro</StdButton>
-                                            </div>
-                                            :
-                                            <div className="row row-cols-xs-3 row-cols-md-2 row-cols-lg-3 row-cols-1 searchSuggestions">
-                                                {this.state.macrosSuggestion.map((option, index) => {
-                                                    if (((option.label.toLowerCase().includes(this.state.searchQuery.toLowerCase()) || this.state.searchQuery === "") && option.type !== "specific" && option.type !== "multiple")) {
-                                                        return <StdInputDropDownOption key={index} value={option.value} onClick={() => this.searchCallBack({ type: option.type, value: option.value })}>{option.label}</StdInputDropDownOption>
-                                                    }
-                                                    return "";
-                                                })}
-                                            </div>
-                                        }
-
-
-                                    </div>
-                                }
-                                {(this.state.searchQuery[0] === "@" || !["@", ":", "+", "#"].includes(this.state.searchQuery[0]) || this.state.searchQuery === "") &&
-
-                                    <div className="specific">
-                                        <div className="d-flex tagDescListTile specific">
-                                            <div className="icon specific">
-                                                @
-                                            </div>
-                                            <div className="tagDesc specific">
-                                                <h6 className="specific">@column(interest)</h6>
-                                                <p>
-                                                    Targets specific column, only return entries with column value like interest
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="row row-cols-xs-3 row-cols-md-2 row-cols-lg-3 row-cols-1 searchSuggestions">
-                                            {this.state.specificSuggestion.map((option, index) => {
-                                                if ((option.label.toLowerCase().includes(this.state.searchQuery.toLowerCase()) || this.state.searchQuery === "") && option.type === "specific") {
-                                                    return <StdInputDropDownOption key={index} value={option.value} onClick={() => this.setPrimaryInput(option)}>{option.label}</StdInputDropDownOption>
-                                                }
-                                                return "";
-                                            }
-                                            )}
-                                        </div>
-                                    </div>
-                                }
-                                {(this.state.searchQuery[0] === "+" || !["@", ":", "+", "#"].includes(this.state.searchQuery[0]) || this.state.searchQuery === "") &&
-                                    <div className="multiple">
-                                        <div className="d-flex tagDescListTile multiple">
-                                            <div className="icon multiple">
-                                                +
-                                            </div>
-                                            <div className="tagDesc multiple">
-                                                <h6 className="multiple">+column(interest)</h6>
-                                                <p>
-                                                    Multiple targeting of specific column, returns entries with column value like interestA or interestB
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="row row-cols-xs-3 row-cols-md-2 row-cols-lg-3 row-cols-1 searchSuggestions">
-                                            {this.state.multipleSuggestion.map((option, index) => {
-                                                if ((option.label.toLowerCase().includes(this.state.searchQuery.toLowerCase()) || this.state.searchQuery === "") && option.type === "multiple") {
-                                                    return <StdInputDropDownOption key={index} value={option.value} onClick={() => this.setPrimaryInput(option)}>{option.label}</StdInputDropDownOption>
-                                                }
-                                                return "";
-                                            }
-                                            )}
-                                        </div>
-                                    </div>
-                                }
-
-                            </div>
-                        }
-                        {this.state.selectedTag !== "" &&
-                            <div className="dropdown row" style={{ "--maxItems": 5 }}>
-                                {this.state.suggestions.map((option, index) => {
-                                    if (option.label.toLowerCase().includes(this.state.searchQuery.toLowerCase()) || this.state.searchQuery === "") {
-                                        return <StdInputDropDownOption className={"col-12 col-md-6 col-lg-3"} key={index} value={option.value} onClick={() => this.searchCallBack({ type: this.state.tagType, value: this.state.selectedTag + "(" + option.value + ")" })}>{option.label}</StdInputDropDownOption>
-                                    }
-                                    return "";
-                                }
-                                )}
+                                {this.props.suggestions.map((suggestion, index) => {
+                                    return <span 
+                                        onClick={() => this.setPrimaryInput({type: suggestion, value: suggestion})}
+                                        className="dropdownOptions" 
+                                        key={index}>
+                                            {suggestion}
+                                        </span>
+                                })}
                             </div>
                         }
                     </div>

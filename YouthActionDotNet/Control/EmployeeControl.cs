@@ -121,12 +121,18 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employees Successfully Retrieved" });
         }
 
-        public async Task<ActionResult<string>> AllInPages(Expression<Func<Employee,bool>> filter, Func<IQueryable<Employee>, IOrderedQueryable<Employee>> orderBy, int page, int pageSize){
+        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<Employee>, IOrderedQueryable<Employee>> orderBy, int page, int pageSize){
             var employees = await EmployeeRepositoryOut.GetAllInPagesAsync(
                 filter: filter,
                 orderBy: orderBy,
                 includeProperties: "",
                 page, pageSize);
+
+            // print employess
+            foreach(var employee in employees){
+                Console.WriteLine(employee.username);
+            }
+
             return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employees Successfully Retrieved" });
         }
 

@@ -62,5 +62,21 @@ namespace YouthActionDotNet.Models
         public string displayHeader { get; set; }
     }
 
+    public class Tag{
+        public string type { get; set; }
+        public string value { get; set; }
+    }
 
+    public class SearchRequest
+        {
+            public List<Tag> data { get; set; }
+            
+            public PageData pageData { get; set; }
+        }
+
+    public class PageData
+    {
+        public int page { get; set; }
+        public int pageSize { get; set; }
+    }
 }
