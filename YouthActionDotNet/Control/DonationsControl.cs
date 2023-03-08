@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,6 +37,19 @@ namespace YouthActionDotNet.Control{
             );
             return JsonConvert.SerializeObject(new {success = true, data = donations}, settings);
         }
+
+        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<Donations>, IOrderedQueryable<Donations>> orderBy, int page, int pageSize)
+        {
+            var donations = await DonationsRepositoryOut.GetAllInPagesAsync(
+                filter : filter, 
+                orderBy: orderBy, 
+                includeProperties: "",
+                page, 
+                pageSize);
+
+            return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
+        }
+
         public async Task<ActionResult<string>> Create(Donations template)
         {
             await DonationsRepositoryIn.InsertAsync(template);
