@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -124,6 +125,18 @@ namespace YouthActionDotNet.Control{
             }
         }
 
+        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<Permissions>, IOrderedQueryable<Permissions>> orderBy, int page, int pageSize)
+        {
+            var permissions = await PermissionRepositoryOut.GetAllInPagesAsync(
+                filter : filter, 
+                orderBy: orderBy, 
+                includeProperties: "",
+                page, 
+                pageSize);
+
+            return JsonConvert.SerializeObject(new { success = true, data = permissions, message = "Permissions Successfully Retrieved" });
+        }
+        
         public string Settings()
         {
             Settings settings = new Settings();

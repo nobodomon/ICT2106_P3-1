@@ -24,6 +24,15 @@ namespace YouthActionDotNet.Controllers{
         {
             return await permissionsControl.All();
         }
+        [HttpPost("All")]
+        public async Task<ActionResult<string>> All([FromBody] SearchRequest request)
+        {
+            List<Tag> tags = request.data;
+            int page = request.pageData.page;
+            int pageSize = request.pageData.pageSize;
+            
+            return await permissionsControl.AllInPages(tags, null, page, pageSize);
+        }
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Permissions template)
         {
