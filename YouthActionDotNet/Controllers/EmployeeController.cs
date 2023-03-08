@@ -77,14 +77,15 @@ namespace YouthActionDotNet.Controllers
             return await employeeControl.AllInPages(null, null,page, pageSize);
         }
 
-        //Search by tags
         [HttpPost("All")]
-        public async Task<ActionResult<string>> All([FromBody] List<Tag> tags, int page, int pageSize)
+        public async Task<ActionResult<string>> All([FromBody] SearchRequest request)
         {
+            List<Tag> tags = request.data;
+            int page = request.pageData.page;
+            int pageSize = request.pageData.pageSize;
             
             return await employeeControl.AllInPages(tags, null, page, pageSize);
         }
-
         [HttpGet("Count")]
         public async Task<ActionResult<string>> Count()
         {
