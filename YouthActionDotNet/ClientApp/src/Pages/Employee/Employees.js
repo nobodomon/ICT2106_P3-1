@@ -19,13 +19,23 @@ export default class Employees extends React.Component {
         textColor: "#ffffff",
         textColorInvert: "#606060",
         api: "/api/Employee/",
+
+        
+        overviewUrl : "/api/Employee/All"
     }
 
     async componentDidMount(){
-        await this.getContent().then((content)=>{
+        await this.getContent(1,20).then((content)=>{
             console.log(content);
             this.setState({
                 content:content,
+            });
+        })
+
+        await this.getCount().then((content)=>{
+            console.log(content);
+            this.setState({
+                count:content.data,
             });
         })
 
@@ -54,8 +64,26 @@ export default class Employees extends React.Component {
         })
     }
 
-    getContent = async () =>{
-        return fetch( this.settings.api + "All" , {
+    getCount = async() =>{
+        return fetch(this.settings.api + "Count" , {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then(res => {
+            console.log(res);
+            return res.json();
+        })
+    }
+
+    getContent = async(page,pageSize) =>{
+        let api = "";
+        if(page === undefined || pageSize === undefined){
+            api = this.settings.api + "All";
+        }else{
+            api = this.settings.api + "All/" + page + "/" + "pageSize=" + pageSize;
+        }
+        return fetch(api , {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -131,6 +159,8 @@ export default class Employees extends React.Component {
                 error={this.state.error}
                 permissions={this.props.permissions}
                 requestError={this.requestError}
+                pageManager={this.getContent}
+                itemCount={this.state.count}
                 >
             </DatapageLayout>
             )

@@ -31,7 +31,9 @@ namespace YouthActionDotNet.Control{
         }
         public async Task<ActionResult<string>> All()
         {
-            var donations = await DonationsRepositoryOut.GetAllAsync();
+            var donations = await DonationsRepositoryOut.GetAllAsync(
+                
+            );
             return JsonConvert.SerializeObject(new {success = true, data = donations}, settings);
         }
         public async Task<ActionResult<string>> Create(Donations template)

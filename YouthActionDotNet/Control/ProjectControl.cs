@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -125,6 +126,19 @@ namespace YouthActionDotNet.Control
         public async Task<ActionResult<string>> All()
         {
             var projects = await ProjectRepositoryOut.GetAllAsync();
+            return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Projects Successfully Retrieved" });
+        }
+
+        // To put into all control
+        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<Project>, IOrderedQueryable<Project>> orderBy, int page, int pageSize)
+        {
+            var projects = await ProjectRepositoryOut.GetAllInPagesAsync(
+                filter : filter, 
+                orderBy: orderBy, 
+                includeProperties: "",
+                page, 
+                pageSize);
+
             return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Projects Successfully Retrieved" });
         }
 
