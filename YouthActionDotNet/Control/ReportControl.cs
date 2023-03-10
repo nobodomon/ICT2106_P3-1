@@ -14,7 +14,7 @@ namespace YouthActionDotNet.Control
 {
     public class ReportControl : IUserInterfaceCRUD<Report>
     {
-        private ReportRepositoryIn ReportRepositoryIn;
+        private GenericRepositoryIn<Report> ReportRepositoryIn;
         private ReportRepositoryOut ReportRepositoryOut;
         private GenericRepositoryIn<File> FileRepositoryIn;
         private GenericRepositoryOut<File> FileRepositoryOut;
@@ -22,7 +22,7 @@ namespace YouthActionDotNet.Control
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
         public ReportControl(DBContext context)
         {
-            ReportRepositoryIn = new ReportRepositoryIn(context);
+            ReportRepositoryIn = new GenericRepositoryIn<Report>(context);
             ReportRepositoryOut = new ReportRepositoryOut(context);
             FileRepositoryIn = new GenericRepositoryIn<File>(context);
             FileRepositoryOut = new GenericRepositoryOut<File>(context);
