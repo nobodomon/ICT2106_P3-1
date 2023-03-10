@@ -48,6 +48,15 @@ namespace YouthActionDotNet.Controllers
         {
             return await serviceCenterControl.All();
         }
+        [HttpPost("All")]
+        public async Task<ActionResult<string>> All([FromBody] SearchRequest request)
+        {
+            List<Tag> tags = request.data;
+            int page = request.pageData.page;
+            int pageSize = request.pageData.pageSize;
+            
+            return await serviceCenterControl.AllInPages(tags, null, page, pageSize);
+        }
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> Update(string id, ServiceCenter template)
         {

@@ -49,7 +49,7 @@ export default class DatapageLayout extends React.Component {
                 perms[perm] === true ? reformattedPerms.push(perm) : null
         });
         const pageNumbers = [];
-        for (let i = 1; i <= Math.ceil(this.state.data.length / this.state.itemsPerPage); i++) {
+        for (let i = 1; i <= Math.ceil(this.props.itemCount / this.state.itemsPerPage); i++) {
             pageNumbers.push(i);
         }
         let extraComponents = [];
@@ -97,11 +97,13 @@ export default class DatapageLayout extends React.Component {
         })
     }
 
-    pageNumberClick = (number) => {
+    pageNumberClick = async (number) => {
 
         if (number < 1 || number > this.state.pageNumbers.length) {
             return;
         }
+
+        await this.props.pageManager(number * this.state.itemsPerPage);
 
         this.setState({
             currentPage: number
@@ -160,31 +162,52 @@ export default class DatapageLayout extends React.Component {
         })
     }
 
-    handleSearchCallBack =(tags) =>{
+    handleSearchCallBack = async (tags) =>{
         
         if(tags.length === 0){
             return this.setState({
                 data: this.props.data
             })
         }
-        let filteredData = [];
-        this.props.data.forEach((item)=>{
-            Object.keys(item).forEach((key)=>{
-                tags.forEach((tag) => {
-                    let tagvalue = tag.value.substring(1,tag.value.length -1);
-                    let found = String(item[key]).toLowerCase().includes(tagvalue.toLowerCase());
-                    if(found){
-                        if(filteredData.find((filteredItem)=>filteredItem === item)){
-                            return;
-                        }else{
-                            filteredData.push(item);
-                        }
-                    }
-                })
+
+        this.setState({
+            loading: true
+        })
+
+        await this.handleSearch(tags).then((data)=>{
+            console.log(data);
+            this.setState({
+                data: data.data,
+                loading: false
             })
         })
-        this.setState({
-            data: filteredData
+    }
+
+    handleSearch = async (e) => {
+
+
+        console.log(e);
+        let overviewUrl = this.props.settings.api + "All";
+
+        const pageData = {
+            page: this.state.currentPage,
+            pageSize: this.state.itemsPerPage,
+        }
+
+        return await fetch(overviewUrl,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: (
+                JSON.stringify({
+                    Data: e,
+                    PageData: pageData
+                })
+            )
+        }).then((response)=>{
+            console.log(response);
+            return response.json();
         })
     }
 
@@ -195,6 +218,11 @@ export default class DatapageLayout extends React.Component {
     }
 
     render() {
+
+        // if(this.state.loading){
+        //     return <div></div>
+        // }
+
         if(this.state.content === ""){
             return <div></div>
         }
@@ -296,7 +324,7 @@ export default class DatapageLayout extends React.Component {
                         
                         <ul className="page-nums">
                             <li className={"page-direction prev " + (this.state.currentPage === 1 ? "disabled" : "")}>
-                                <a href="#" onClick={() => this.pageNumberClick(this.state.currentPage - 1)}><i className="bi bi-chevron-left"></i></a>
+                                <span href="#" onClick={() => this.pageNumberClick(this.state.currentPage - 1)}><i className="bi bi-chevron-left"></i></span>
                             </li>
                             {this.state.pageNumbers > 5 ? 
                                 this.state.pageNumbers.map((number, index) => {
@@ -304,7 +332,7 @@ export default class DatapageLayout extends React.Component {
                                         if(number > this.state.currentPage - 3 && number < this.state.currentPage + 3){
                                             return (
                                                 <li key={number} className={"page-num " + (this.state.currentPage === number ? "active" : "")}>
-                                                    <a href="#" onClick={() => this.pageNumberClick(number)}>{number}</a>
+                                                    <span href="#" onClick={() => this.pageNumberClick(number)}>{number}</span>
                                                 </li>
                                             )
                                         }
@@ -312,7 +340,7 @@ export default class DatapageLayout extends React.Component {
                                         if(number < 7){
                                             return (
                                                 <li key={number} className={"page-num " + (this.state.currentPage === number ? "active" : "")}>
-                                                    <a href="#" onClick={() => this.pageNumberClick(number)}>{number}</a>
+                                                    <span href="#" onClick={() => this.pageNumberClick(number)}>{number}</span>
                                                 </li>
                                             )
                                         }
@@ -322,13 +350,13 @@ export default class DatapageLayout extends React.Component {
                                 this.state.pageNumbers.map((number, index) => {
                                     return (
                                         <li key={number} className={"page-num " + (this.state.currentPage === number ? "active" : "")}>
-                                            <a href="#" onClick={() => this.pageNumberClick(number)}>{number}</a>
+                                            <span href="#" onClick={() => this.pageNumberClick(number)}>{number}</span>
                                         </li>
                                     )
                                 })
                             }
                             <li className={"page-direction next " + (this.state.currentPage === this.state.pageNumbers.length ? "disabled" : "")}>
-                                <a href="#" onClick={() => this.pageNumberClick(this.state.currentPage + 1)}><i className="bi bi-chevron-right"></i></a>
+                                <span href="#" onClick={() => this.pageNumberClick(this.state.currentPage + 1)}><i className="bi bi-chevron-right"></i></span>
                             </li>
                         </ul>
                     </div>
@@ -360,6 +388,18 @@ export class TableHeader extends React.Component {
             currentTags: CurrentTags
 
         }
+    }
+
+    componentDidMount(){
+        let fieldSettings = this.props.fieldSettings;
+
+        let columns = Object.keys(fieldSettings).map((key, index) => {
+            return key;
+        })
+
+        this.setState({
+            columns: columns,
+        })
     }
 
 
@@ -422,7 +462,14 @@ export class TableHeader extends React.Component {
                                 </div>
                                 <span className="tableTitle">{this.props.settings.title}</span>
                             </div>}
-                        <SearchBar className={"searchHotBar"} onClick={this.toggleSearchBar} toggleTagMacros={this.props.handles} searchCallBack={this.searchCallBack} persist={this.props.showBottomMenu} toolTip={<div>
+                        <SearchBar 
+                        className={"searchHotBar"} 
+                        onClick={this.toggleSearchBar} 
+                        toggleTagMacros={this.props.handles} 
+                        searchCallBack={this.searchCallBack} 
+                        persist={this.props.showBottomMenu} 
+                        suggestions={this.state.columns}
+                        toolTip={<div>
 
 
                             <h6>(!interest)</h6>

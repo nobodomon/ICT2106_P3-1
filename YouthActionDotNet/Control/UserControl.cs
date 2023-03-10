@@ -8,6 +8,7 @@ using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Controllers;
+using System.Collections.Generic;
 
 namespace YouthActionDotNet.Control
 {
@@ -140,6 +141,17 @@ namespace YouthActionDotNet.Control
         {
             var users = await UserRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = users, message = "Users Successfully Retrieved" });
+        }
+        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<User>, IOrderedQueryable<User>> orderBy, int page, int pageSize)
+        {
+            var projects = await UserRepositoryOut.GetAllInPagesAsync(
+                filter : filter, 
+                orderBy: orderBy, 
+                includeProperties: "",
+                page, 
+                pageSize);
+
+            return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Users Successfully Retrieved" });
         }
         public string Settings()
         {

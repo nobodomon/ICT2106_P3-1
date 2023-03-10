@@ -85,6 +85,16 @@ namespace YouthActionDotNet.Controllers
             return volunteerWorkControl.Get(id) != null;
         }
 
+        [HttpPost("All")]
+        public async Task<ActionResult<string>> All([FromBody] SearchRequest request)
+        {
+            List<Tag> tags = request.data;
+            int page = request.pageData.page;
+            int pageSize = request.pageData.pageSize;
+            
+            return await volunteerWorkControl.AllInPages(tags, null, page, pageSize);
+        }
+
         [HttpGet("Settings")]
         public string Settings()
         {

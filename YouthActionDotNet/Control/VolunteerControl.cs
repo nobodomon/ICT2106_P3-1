@@ -177,6 +177,18 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, data = volunteers, message = "Volunteers Successfully Retrieved" }, settings);
         }
 
+        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<Volunteer>, IOrderedQueryable<Volunteer>> orderBy, int page, int pageSize)
+        {
+            var projects = await VolunteerRepositoryOut.GetAllInPagesAsync(
+                filter : filter, 
+                orderBy: orderBy, 
+                includeProperties: "",
+                page, 
+                pageSize);
+
+            return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Volunteers Successfully Retrieved" });
+        }
+
         public string Settings()
         {
             Settings settings = new UserSettings();

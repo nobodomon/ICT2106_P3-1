@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using YouthActionDotNet.Models;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Controllers;
+using System.Linq.Expressions;
 
 namespace YouthActionDotNet.Control 
 {
@@ -119,6 +120,27 @@ namespace YouthActionDotNet.Control
             var employees = await EmployeeRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employees Successfully Retrieved" });
         }
+
+        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<Employee>, IOrderedQueryable<Employee>> orderBy, int page, int pageSize){
+            var employees = await EmployeeRepositoryOut.GetAllInPagesAsync(
+                filter: filter,
+                orderBy: orderBy,
+                includeProperties: "",
+                page, pageSize);
+
+            // print employess
+            foreach(var employee in employees){
+                Console.WriteLine(employee.username);
+            }
+
+            return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employees Successfully Retrieved" });
+        }
+
+        public async Task<ActionResult<string>> Count(){
+            var employees = await EmployeeRepositoryOut.GetPagesAsync();
+            return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employees Successfully Retrieved" });
+        }
+
         public string Settings()
         {
             Settings settings = new UserSettings();

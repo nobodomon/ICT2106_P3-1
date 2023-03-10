@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using YouthActionDotNet.Models;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Control;
+using System.Linq.Expressions;
 
 namespace YouthActionDotNet.Controllers
 {
@@ -67,6 +68,28 @@ namespace YouthActionDotNet.Controllers
         public async Task<ActionResult<string>> All()
         {
             return await employeeControl.All();
+        }
+
+        [HttpGet("All/{page}/pageSize={pageSize}")]
+        public async Task<ActionResult<string>> All(
+            int page, int pageSize)
+        {
+            return await employeeControl.AllInPages(null, null,page, pageSize);
+        }
+
+        [HttpPost("All")]
+        public async Task<ActionResult<string>> All([FromBody] SearchRequest request)
+        {
+            List<Tag> tags = request.data;
+            int page = request.pageData.page;
+            int pageSize = request.pageData.pageSize;
+            
+            return await employeeControl.AllInPages(tags, null, page, pageSize);
+        }
+        [HttpGet("Count")]
+        public async Task<ActionResult<string>> Count()
+        {
+            return await employeeControl.Count();
         }
 
         [HttpGet("Settings")]

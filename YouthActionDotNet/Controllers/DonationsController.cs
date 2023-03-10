@@ -55,6 +55,16 @@ namespace YouthActionDotNet.Controllers{
             return await donationsControl.Get(id);
         }
 
+        [HttpPost("All")]
+        public async Task<ActionResult<string>> All([FromBody] SearchRequest request)
+        {
+            List<Tag> tags = request.data;
+            int page = request.pageData.page;
+            int pageSize = request.pageData.pageSize;
+            
+            return await donationsControl.AllInPages(tags, null, page, pageSize);
+        }
+
         [HttpGet("Settings")]
         public string Settings()
         {

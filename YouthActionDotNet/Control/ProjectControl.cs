@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -128,6 +129,19 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Projects Successfully Retrieved" });
         }
 
+        // To put into all control
+        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<Project>, IOrderedQueryable<Project>> orderBy, int page, int pageSize)
+        {
+            var projects = await ProjectRepositoryOut.GetAllInPagesAsync(
+                filter : filter, 
+                orderBy: orderBy, 
+                includeProperties: "",
+                page, 
+                pageSize);
+
+            return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Projects Successfully Retrieved" });
+        }
+
         public string Settings()
         {
             Settings settings = new Settings();
@@ -152,7 +166,16 @@ namespace YouthActionDotNet.Control
             settings.FieldSettings.Add("ProjectCompletionDate", new InputType { type = "datetime", displayLabel = "Project Completion Date", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectStatus", new InputType { type = "text", displayLabel = "Project Status", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectBudget", new InputType { type = "number", displayLabel = "Project Budget", editable = true, primaryKey = false });
-
+            settings.FieldSettings.Add("ProjectTags", new DropdownInputType { 
+                type = "dropdown", 
+                displayLabel = "Project Tags", 
+                editable = true, 
+                primaryKey = false,
+                options = new List<DropdownOption>(){
+                    new DropdownOption { value = "Pinned", label = "Pinned" },
+                    new DropdownOption { value = "Archived", label = "Archived" }
+                }
+            });
             var serviceCenters = ServiceCenterRepositoryOut.GetAll();
             settings.FieldSettings.Add("ServiceCenterId", new DropdownInputType
             {

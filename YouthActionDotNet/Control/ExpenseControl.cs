@@ -36,6 +36,17 @@ namespace YouthActionDotNet.Control
             var expense = await ExpenseRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = expense, message = "Expense Successfully Retrieved" }, settings);
         }
+        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<Expense>, IOrderedQueryable<Expense>> orderBy, int page, int pageSize)
+        {
+            var projects = await ExpenseRepositoryOut.GetAllInPagesAsync(
+                filter : filter, 
+                orderBy: orderBy, 
+                includeProperties: "",
+                page, 
+                pageSize);
+
+            return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Expenses Successfully Retrieved" });
+        }
         public async Task<ActionResult<string>> Get(string id)
         {
             var expense = await ExpenseRepositoryOut.GetByIDAsync(id);
@@ -127,6 +138,7 @@ namespace YouthActionDotNet.Control
         {
             return ExpenseRepositoryOut.GetByID(id) != null;
         }
+
         public string Settings()
         {
             Settings settings = new Settings();
@@ -181,7 +193,7 @@ namespace YouthActionDotNet.Control
                 primaryKey = false,
                 options = project.Select(x => new DropdownOption { value = x.ProjectId, label = x.ProjectName }).ToList()
             });
-
+            
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Fetched" });
 
         }
