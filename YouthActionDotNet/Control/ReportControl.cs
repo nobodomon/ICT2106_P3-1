@@ -14,16 +14,16 @@ namespace YouthActionDotNet.Control
 {
     public class ReportControl : IUserInterfaceCRUD<Report>
     {
-        private GenericRepositoryIn<Report> ReportRepositoryIn;
-        private GenericRepositoryOut<Report> ReportRepositoryOut;
+        private ReportRepositoryIn ReportRepositoryIn;
+        private ReportRepositoryOut ReportRepositoryOut;
         private GenericRepositoryIn<File> FileRepositoryIn;
         private GenericRepositoryOut<File> FileRepositoryOut;
 
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
         public ReportControl(DBContext context)
         {
-            ReportRepositoryIn = new GenericRepositoryIn<Report>(context);
-            ReportRepositoryOut = new GenericRepositoryOut<Report>(context);
+            ReportRepositoryIn = new ReportRepositoryIn(context);
+            ReportRepositoryOut = new ReportRepositoryOut(context);
             FileRepositoryIn = new GenericRepositoryIn<File>(context);
             FileRepositoryOut = new GenericRepositoryOut<File>(context);
         }
@@ -125,6 +125,12 @@ namespace YouthActionDotNet.Control
         {
             var reports = await ReportRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = reports, message = "Reports Successfully Retrieved" });
+        }
+
+        public async Task<ActionResult<string>> GetEmployeeExpenseData(string reportStartDate, string reportEndDate, string projectId)
+        {
+            var data = await ReportRepositoryOut.getEmployeeExpenseReportData(reportStartDate,reportEndDate,projectId);
+            return JsonConvert.SerializeObject(new { success = true, data = data, message = "Reports Successfully Retrieved" });
         }
 
         public string Settings()

@@ -73,6 +73,12 @@ namespace YouthActionDotNet.Controllers
             return await reportControl.All();
         }
 
+        [HttpPost("EmployeeExpense")]
+        public async Task<ActionResult<string>> getEmployeeExpenseReport(string reportStartDate, string reportEndDate, string projectId)
+        {
+            return await reportControl.GetEmployeeExpenseData(reportStartDate, reportEndDate, projectId);
+        }
+
         [HttpGet("Settings")]
         public string Settings()
         {
