@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -127,9 +127,9 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, data = reports, message = "Reports Successfully Retrieved" });
         }
 
-        public async Task<ActionResult<string>> GetEmployeeExpenseData(string reportStartDate, string reportEndDate, string projectId)
+        public async Task<ActionResult<string>> GetEmployeeExpenseData(SqlDateTime reportStartDate, SqlDateTime reportEndDate, string projectId)
         {
-            var data = await ReportRepositoryOut.getEmployeeExpenseReportData(reportStartDate,reportEndDate,projectId);
+            var data = await ReportRepositoryOut.getEmployeeExpenseReportData(reportStartDate, reportEndDate, projectId);
             return JsonConvert.SerializeObject(new { success = true, data = data, message = "Reports Successfully Retrieved" });
         }
 
@@ -151,7 +151,7 @@ namespace YouthActionDotNet.Control
             settings.FieldSettings.Add("ReportDateCreation", new InputType { type = "datetime", displayLabel = "Report Date Creation", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ReportStartDate", new InputType { type = "datetime", displayLabel = "Report Start Date", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ReportEndDate", new InputType { type = "datetime", displayLabel = "Report End Date", editable = true, primaryKey = false });
-            
+
             var files = FileRepositoryOut.GetAll();
             settings.FieldSettings.Add("FileId", new DropdownInputType
             {

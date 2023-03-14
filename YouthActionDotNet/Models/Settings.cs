@@ -79,4 +79,11 @@ namespace YouthActionDotNet.Models
         public int page { get; set; }
         public int pageSize { get; set; }
     }
+
+    public class ExpensesReportQuery
+    {
+        public string startDate { get; set; }
+        public string endDate { get; set; }
+        public string projectId { get; set; }
+    }
 }

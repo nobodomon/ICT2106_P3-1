@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class ReportController : ControllerBase, IUserInterfaceCRUD<Report>
     {
-      private ReportControl reportControl;
+        private ReportControl reportControl;
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
 
         public ReportController(DBContext context)
@@ -74,9 +75,10 @@ namespace YouthActionDotNet.Controllers
         }
 
         [HttpPost("EmployeeExpense")]
-        public async Task<ActionResult<string>> getEmployeeExpenseReport(string reportStartDate, string reportEndDate, string projectId)
+        public async Task<ActionResult<string>> getEmployeeExpenseReport([FromBody] ExpensesReportQuery request)
         {
-            return await reportControl.GetEmployeeExpenseData(reportStartDate, reportEndDate, projectId);
+            Console.WriteLine(request.startDate);
+            return await reportControl.GetEmployeeExpenseData(SqlDateTime.Parse(request.startDate), SqlDateTime.Parse(request.endDate), request.projectId);
         }
 
         [HttpGet("Settings")]
