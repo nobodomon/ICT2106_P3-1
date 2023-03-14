@@ -454,12 +454,12 @@ export class TableHeader extends React.Component {
                     <div className="d-flex justify-content-end align-items-center">
                         {this.props.showBottomMenu ? <div /> :
                             <div className="tableTitleContainer">
-                                <div className="tableTitlePulseAnimation-1" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
+                                {/* <div className="tableTitlePulseAnimation-1" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
                                 </div>
                                 <div className="tableTitlePulseAnimation-2" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
                                 </div>
                                 <div className="tableTitlePulseAnimation-3" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
-                                </div>
+                                </div> */}
                                 <span className="tableTitle">{this.props.settings.title}</span>
                             </div>}
                         <SearchBar 

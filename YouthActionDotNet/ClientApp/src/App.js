@@ -62,7 +62,7 @@ export default function App() {
   const navigate = useNavigate();
   if (!token) {
     return (
-        <div className="App" style={{maxHeight: height}}>
+        <div className="App max-h-screen">
           <LoggedOutNav toggle={drawerToggleClickHandler}></LoggedOutNav>
           <div className="App-header" style={{maxHeight: height - 56}}>
             <SlideDrawer show={drawerOpen} toggle={drawerToggleClickHandler} direction="top">
@@ -84,7 +84,7 @@ export default function App() {
   } else {
     const parsedPerms = JSON.parse(perms);
     return (
-        <div className="App" style={{maxHeight: height}}>
+        <div className="App max-h-screen">
           <LoggedInNav user={token.data} logout={logout} toggle={drawerToggleClickHandler} show={drawerOpen}></LoggedInNav>
           <header className="App-header" style={{maxHeight: height - 56}}>
             {backdrop}
@@ -93,11 +93,11 @@ export default function App() {
               <DrawerSection label={"Modules"}>
                 <DrawerItem label="Home" to={"/"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 
-                {parsedPerms.map((perm)=>{<DrawerItem label="Employees" to={"/Employees"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                {parsedPerms.map((perm, index)=>{<DrawerItem label="Employees" to={"/Employees"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 const currMod = perm.Module;
                 const toTextUrl = perm.Module.replace(" ", "-");
                 if(perm.Read){
-                  return <DrawerItem label={currMod} to={"/" + toTextUrl} logo={userImg}></DrawerItem>
+                  return <DrawerItem key={index} label={currMod} to={"/" + toTextUrl} logo={userImg}></DrawerItem>
                 }
                 })}
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>

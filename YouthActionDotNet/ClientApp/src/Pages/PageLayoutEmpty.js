@@ -867,8 +867,8 @@ class SearchBar extends React.Component {
                     </div>{this.state.selectedTag !== "" &&
                         <SearchTags showEdit={false} onCancelClick={this.onCancelClick} type={this.state.tagType}>{this.state.selectedTag}</SearchTags>
                     }
-                    <div className={"d-flex align-items-center " + this.state.inputClasses} onAnimationEnd={this.focus}>
-                        <input type={"text"} className={"SearchField"} placeholder={this.state.placeholder} ref={this.searchInput} onChange={this.handleSearchQueryChange} onKeyDown={(e) => this.handleKeydown(e, this.state.searchQuery)}></input>
+                    <div className={"form-control bg-transparent border-transparent p-0 w-full " + this.state.inputClasses} onAnimationEnd={this.focus}>
+                        <input type={"text"} className={"input input-primary border-transparent grow hover:border-transparent w-full"} placeholder={this.state.placeholder} ref={this.searchInput} onChange={this.handleSearchQueryChange} onKeyDown={(e) => this.handleKeydown(e, this.state.searchQuery)}></input>
                     </div>
                 </div>
             </div>
