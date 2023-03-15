@@ -142,6 +142,7 @@ export default function App() {
               <Route path="/Expenses" element={<Expense user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Permissions" element={<Permissions user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Sample" element={<Sample user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Report" element={<Report user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Logout" element={<Logout logout={logout} clearPerms={clearPerms}></Logout>}/>
 
             </Routes>
