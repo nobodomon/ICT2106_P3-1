@@ -75,5 +75,12 @@
     "Read": true,
     "Update": true,
     "Delete": true
+  },
+  {
+    "Module": "Report",
+    "Create": true,
+    "Read": true,
+    "Update": true,
+    "Delete": true
   }
 ]
