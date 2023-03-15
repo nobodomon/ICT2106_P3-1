@@ -149,9 +149,34 @@ export default class Login extends React.Component {
 
   render() {
     return (
-      <div className="d-flex loginPage" style={{maxHeight: this.state.maxHeight}}>
-        <div className="loginContainer">
-          <div className="leftPanel" style={{ transform: this.state.transform }}>
+      <div className="flex w-full h-full grow items-center justify-center overflow-y-clip">
+        <div className="flex flex-col xl:flex-row xl:w-1/2 w-10/12 items-stretch border shadow rounded-lg bg-primary overflow-y-clip">
+        <div className="xl:w-1/2 w-full relative xl:order-last flex justify-center self-center items-center flex-col h-full">
+            {window.innerWidth >= 576 &&
+              <ul class='circles'>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+              </ul>}
+              
+              <h1 className="text-white text-4xl font-bold">YouthAction</h1>
+              <div className="logoContainer text-primary bg-transparent">
+                {/* <img src={museLogo} alt="logo" /> */}
+              </div>
+              <div className="text-base-100">
+                <h1>
+                  Welcome Back!
+                </h1>
+              </div>
+          </div>
+          <div className="xl:w-1/2 w-full bg-base-100">
             <MultiStepBox steps={loginSteps} currentStep={0}>
               <LoginFormBox title={"Login"}
                 handleSubmit={this.handleLogin}
@@ -206,29 +231,7 @@ export default class Login extends React.Component {
               </ForgetPasswordFormBox>
             </MultiStepBox>
           </div>
-          <div className="rightPanel">
-            {window.innerWidth >= 576 &&
-              <ul class='circles'>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-              </ul>}
-              <div className="logoContainer">
-                <img src={museLogo} alt="logo" />
-              </div>
-              <div className="logoCaption">
-                <h1>
-                  Welcome Back!
-                </h1>
-              </div>
-          </div>
+          
         </div>
         <div className={"modalMessage " + (this.state.message.length > 0 ? "show" : "")} onAnimationEnd={()=>this.setState({
           message: ""
@@ -252,6 +255,7 @@ export class LoginFormBox extends React.Component {
         <div className="leftPanel-Title">
           <span>{this.props.title}</span>
         </div>
+        <div className="divider"/>
         <form onSubmit={this.props.handleSubmit}>
           {this.props.fields.map((field, index) => {
             return (
@@ -268,7 +272,7 @@ export class LoginFormBox extends React.Component {
           <div className="row-cols-md-2 row-cols-1 loginActions">
             {this.props.actions.map((action, index) => {
               return (
-                <StdButton key={index} type={action.type} className="primary" onClick={action.onClick}>{action.label}</StdButton>)
+                <StdButton key={index} type={action.type} style="primary w-full" onClick={action.onClick}>{action.label}</StdButton>)
             })}
           </div>
           <div onClick={()=>this.props.setStep(2)}><span className="forgetPassword" href="#">Forgot Password?</span></div>
@@ -289,6 +293,7 @@ export class RegisterFormBox extends React.Component {
         <div className="leftPanel-Title">
           <span>{this.props.title}</span>
         </div>
+        <div className="divider"/>
         <form onSubmit={this.props.handleSubmit}>
           {this.props.fields.map((field, index) => {
             return (
@@ -298,7 +303,7 @@ export class RegisterFormBox extends React.Component {
           <div className="row-cols-md-2 row-cols-1 loginActions">
             {this.props.actions.map((action, index) => {
               return (
-                <StdButton key={index} type={action.type} className="primary" onClick={action.onClick}>{action.label}</StdButton>)
+                <StdButton key={index} type={action.type}  style="primary w-full" onClick={action.onClick}>{action.label}</StdButton>)
             })}
           </div>
           <div onClick={()=>this.props.setStep(0)}><span className="forgetPassword" href={"#"}>Already have an account?</span></div>
@@ -319,15 +324,16 @@ export class ForgetPasswordFormBox extends React.Component {
         <div className="leftPanel-Title">
           <span>{this.props.title}</span>
         </div>
+        <div className="divider"/>
         <form onSubmit={this.props.handleSubmit}>
           {this.props.fields.map((field, index) => {
             return (
               <StdInput type={field.type} key={index} showIndicator={false} showSaveBtn={false} label={field.label} onChange={field.onChange}></StdInput>
             )
           })}
-          <div className="loginActions">
-            <StdButton type="button" onClick={()=>this.props.setStep(0)} className="secondary">Back</StdButton>
-            <StdButton type="button" className="primary">Submit</StdButton>
+          <div className="flex flex-col gap-4">
+            <StdButton type="button" onClick={()=>this.props.setStep(0)}  style="primary w-full">Back</StdButton>
+            <StdButton type="button"  style="primary w-full">Submit</StdButton>
           </div>
           </form>
         <div className="spacer">

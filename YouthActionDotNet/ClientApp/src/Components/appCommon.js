@@ -349,13 +349,9 @@ export class Loading extends React.Component {
 
   render(){
     return(
-      <AppPageContainer nopad={true}>
-        <div className="loading-graphic">  
-          <div className="spinner-border text-dark" role="status">
-          </div>
-          <span className="sr-only">{this.state.text}</span>
-        </div>
-      </AppPageContainer>
+      <div className="w-full h-full">
+        <progress className="progress w-full"></progress>
+      </div>
     )
   }
 }

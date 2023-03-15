@@ -4,8 +4,8 @@ import {AccessDeniedPanel, Loading} from "../Components/appCommon";
 import { StdInput } from "../Components/input";
 import SlideDrawer, { DrawerItemNonLink } from "../Components/sideNav";
 import { Cell, ListTable, HeaderRow, ExpandableRow } from "../Components/tableComponents";
-import {CSVLink} from "react-csv";
 import U from "../Utilities/utilities";
+import { AddEntry, DeleteEntry,GenerateSpreadsheet } from "../Components/common";
 
 export const searchSuggestions = [
 ]
@@ -232,7 +232,7 @@ export default class DatapageLayout extends React.Component {
 
         return (
             this.state.perms?.Read ? 
-            <div className="d-flex flex-column container-fluid listPageContainer h-100">
+            <div className="flex flex-col w-full p-4 listPageContainer h-full">
                 {this.props.error !== "" && 
                     <div className="listPageContainer-error">
                         {this.props.error}
@@ -242,7 +242,7 @@ export default class DatapageLayout extends React.Component {
                         ></IconButton>
                     </div>
                 }
-                <div className="col-12 d-flex flex-column h-100">
+                <div className="w-full h-full flex flex-col">
                     
                     <TableHeader actions={
                         this.state.tableHeaderActions
@@ -263,9 +263,8 @@ export default class DatapageLayout extends React.Component {
                     requestError={this.props.requestError}
                     extraComponents={this.state.extraComponents}
                     ></TableHeader>
-                    <TableFooter settings={this.props.settings} toggle={this.drawerToggleClickHandler} showBottomMenu={this.state.showBottomMenu}></TableFooter>
                     <DivSpacing spacing={1}></DivSpacing>
-                    <div className="d-flex justify-content-center align-items-start flex-fill">
+                    <div className="flex justify-center items-start flex-fill grow">
                         <ListTable settings={this.settings}>
                             <HeaderRow>
                                 {Object.keys(this.props.headers).map((key, index) => {
@@ -296,7 +295,7 @@ export default class DatapageLayout extends React.Component {
                         </ListTable>
                         
                     </div>
-                    <div className="d-flex justify-content-end page-nums-container align-self-end">
+                    <div className="flex justify-end page-nums-container self-end">
                         <div className="items-per-page">
                             <StdInput
                                 type="dropdown"
@@ -385,7 +384,7 @@ export class TableHeader extends React.Component {
         this.state = {
             classList: "tableRow",
             searchBarExtended: false,
-            currentTags: CurrentTags
+            currentTags: [],
 
         }
     }
@@ -451,7 +450,7 @@ export class TableHeader extends React.Component {
         return (
             <div className="tableHeader">
                 <div className={"tableHeaderActions " + (this.props.component === "" ? "borderRadius" : "topBorderRadius")}>
-                    <div className="d-flex justify-content-end align-items-center">
+                    <div className="flex justify-end items-center">
                         {this.props.showBottomMenu ? <div /> :
                             <div className="tableTitleContainer">
                                 {/* <div className="tableTitlePulseAnimation-1" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
@@ -462,14 +461,14 @@ export class TableHeader extends React.Component {
                                 </div> */}
                                 <span className="tableTitle">{this.props.settings.title}</span>
                             </div>}
-                        <SearchBar 
-                        className={"searchHotBar"} 
-                        onClick={this.toggleSearchBar} 
-                        toggleTagMacros={this.props.handles} 
-                        searchCallBack={this.searchCallBack} 
-                        persist={this.props.showBottomMenu} 
-                        suggestions={this.state.columns}
-                        toolTip={<div>
+                            <SearchBar 
+                            className={"searchHotBar"} 
+                            onClick={this.toggleSearchBar} 
+                            toggleTagMacros={this.props.handles} 
+                            searchCallBack={this.searchCallBack} 
+                            persist={this.props.showBottomMenu} 
+                            suggestions={this.state.columns}
+                            toolTip={<div>
 
 
                             <h6>(!interest)</h6>
@@ -585,672 +584,17 @@ class HeaderExpansionPane extends React.Component {
     render() {
         return (
             <div className="p-4 headerExpansionPane">
-                <div className={"panelCloseBtn d-flex justify-content-between align-items-center"}>
+                <div className={"w-full flex justify-between items-center"}>
                     <h1>{this.props.title}</h1>
-                    <IconButtonWithText className={"invert"} icon={<i className="bi bi-x"></i>} onClick={this.props.handleClose} label={"Close"}></IconButtonWithText>
+                    <IconButtonWithText icon={<i className="bi bi-x"></i>} onClick={this.props.handleClose} label={"Close"}></IconButtonWithText>
                 </div>
+                <div className="divider">Fill up the required information below</div>
                 {this.props.children}
             </div>
         )
     }
 
 
-}
-
-class AddEntry extends React.Component{
-    state = {
-        courseToAdd: {},
-    }
-
-    onChange = (field, value) => {
-        var tempCourse = this.state.courseToAdd;
-        tempCourse[field] = value;
-        this.setState({
-            courseToAdd: tempCourse
-        })
-    }
-
-    uploadFile = async (file) => {
-        console.log(file);
-        const formData = new FormData();
-        formData.append("file", file.FileUrl);
-        
-        return await fetch("/api/File/Upload",
-            {
-                method: "POST",
-                body: formData,
-            }
-        ).then((res) => {
-            console.log(res);
-            return res.json();
-        }).catch(err => {
-            console.log(err);
-        })
-    }
-
-    createCourse = async (courseToAdd) => {
-
-        return fetch(this.props.settings.api + "Create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(courseToAdd),
-        }).then((res => {
-            return res.json();
-        })).catch((err) => {
-            console.log(err);
-        })
-    }
-
-    handleCourseCreation = async (e) => {
-        e.preventDefault();
-        var courseToAdd = this.state.courseToAdd;
-        var fileUploadFields = [];
-        
-        for(const field of Object.keys(this.props.fieldSettings)){
-            if (this.props.fieldSettings[field].type === "file") {
-                fileUploadFields.push(field);
-            }
-        }
-
-        for(const field of fileUploadFields){
-            try {
-                const res = await this.uploadFile(courseToAdd[field]);
-                if(res.success){
-                    courseToAdd[field] = res.data;
-                }
-            }catch(e){
-                this.props.requestError(e);
-            }
-        }
-        try {
-            const res = await this.createCourse(courseToAdd);
-            if(res.success){
-                this.props.requestRefresh();
-            }else{
-                this.props.requestError(res.message);
-            }
-        }catch(e){
-            this.props.requestError(e);
-        }
-    }
-
-    render(){
-        return (
-            <div className="container-fluid addEntry">
-                <form className={"addEntry-inputFields"} onSubmit={this.handleCourseCreation}>
-                {Object.keys(this.props.fieldSettings).map(
-                    (key, index) => {
-                        return (this.props.fieldSettings[key].primaryKey? "" : 
-                            <StdInput 
-                            label = {this.props.fieldSettings[key].displayLabel}
-                            type={this.props.fieldSettings[key].type}
-                            enabled = {true}
-                            fieldLabel={key}
-                            onChange = {this.onChange}
-                            options={this.props.fieldSettings[key].options}
-                            dateFormat = {this.props.fieldSettings[key].dateFormat}
-                            allowEmpty = {true}
-                            toolTip = {this.props.fieldSettings[key].toolTip}
-                            >
-                            </StdInput>)
-                    }
-                )}
-                <StdButton type={"submit"}>Submit</StdButton>
-            
-                </form>
-                </div>
-        )
-    }
-}
-
-class DeleteEntry extends React.Component{
-    state = {
-        courseToDelete: {},
-    }
-
-    onChange = (field, value) => {
-        var tempCourse = this.state.courseToDelete;
-        tempCourse[field] = value;
-        this.setState({
-            courseToDelete: tempCourse
-        })
-    }
-
-    deleteCourse = async (courseToDelete) => {
-        console.log(courseToDelete);
-        return fetch(this.props.settings.api + "Delete", {
-            method: "Delete",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(courseToDelete),
-        }).then((res => {
-            return res.json();
-        }));
-    }
-
-    handleCourseDeletion = async (e) => {
-        e.preventDefault();
-        await this.deleteCourse(this.state.courseToDelete).then((content) => {
-            if(content.success){
-                this.props.requestRefresh();
-            }else{
-                this.props.requestError(content.message);
-            }
-        })
-    }
-
-    render(){
-        return (
-            <div className="container-fluid deleteEntry">
-                <form className={"deleteEntry-inputFields"} onSubmit={this.handleCourseDeletion}>
-                {Object.keys(this.props.fieldSettings).map(
-                    (key, index) => {
-                        return (this.props.fieldSettings[key].primaryKey? 
-                            <StdInput 
-                            label = {this.props.fieldSettings[key].displayLabel}
-                            type={"text"}
-                            enabled = {true}
-                            fieldLabel={key}
-                            onChange = {this.onChange}
-                            options={this.props.fieldSettings[key].options}
-                            dateFormat = {this.props.fieldSettings[key].dateFormat}
-                            >
-                            </StdInput> : "")
-                    }
-                )}
-                <StdButton type={"submit"}>Submit</StdButton>
-            
-                </form>
-            </div>
-        )
-    }
-}
-
-class GenerateSpreadsheet extends React.Component{
-    state={
-        columns: [],
-        spreadsheetReady: false,
-    }
-    
-    componentDidMount(){
-        let columns = [];
-        for(var i = 0; i < Object.keys(this.props.fieldSettings).length; i++){
-            columns.push(
-                {
-                    label: Object.keys(this.props.fieldSettings)[i],
-                    key: Object.keys(this.props.fieldSettings)[i],
-                }
-            );
-        }
-        this.setState({
-            columns: columns
-        });
-    }
-
-    reOrderColumns = (index, direction) => {
-        var tempColumns = this.state.columns;
-        if(direction === "up"){
-            if(index > 0){
-                var temp = tempColumns[index];
-                tempColumns[index] = tempColumns[index - 1];
-                tempColumns[index - 1] = temp;
-            }
-        } else {
-            if(index < tempColumns.length - 1){
-                var temp = tempColumns[index];
-                tempColumns[index] = tempColumns[index + 1];
-                tempColumns[index + 1] = temp;
-            }
-        }
-        this.setState({
-            columns: tempColumns
-        });
-    }
-
-    generateSpreadsheet = () =>{
-        this.setState({
-            spreadsheetReady : false
-        })
-
-        // Fake loading time to show false sense of progress
-        setTimeout(() => {
-            this.setState({
-                spreadsheetReady : true
-            })}, 1000);
-    }
-
-    render(){
-        return (
-            <div className="container-fluid generate-spreadsheet">
-                <div className="column-order">
-                    {this.state.columns.map((column, index) => {
-                        return <div className="column">
-                            <div className="column-order-buttons">
-                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-up"></i>} onClick={() => this.reOrderColumns(index, "up")}></IconButton>
-                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-down"></i>} onClick={() => this.reOrderColumns(index, "down")}></IconButton>
-                            </div>
-                            <div className="column-name">{column.label}</div>
-                        </div>
-                    })}     
-                </div>
-                <div className="generate-actions">
-                    <StdButton onClick={() => this.generateSpreadsheet()}>
-                        Generate Spreadsheet
-                    </StdButton>
-
-                    {this.state.spreadsheetReady ?
-                    
-                    <CSVLink data={this.props.data} className={"forget-password"} headers={this.state.columns} filename={this.props.settings.title + ".csv"}>Download</CSVLink>
-                    :
-                    <div className="spinner-border" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                    }    
-                </div>
-            </div>
-        )
-    }
-
-    
-}
-
-class ColumnSettings extends React.Component {
-    render() {
-        return (
-            <div className="col-12">
-
-            </div>
-        )
-    }
-}
-
-class TagMacros extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            currentMode: "default",
-            editable: true
-        }
-        this.toggleEditMode = this.toggleEditMode.bind(this);
-        this.toggleAddMode = this.toggleAddMode.bind(this);
-    }
-
-    componentDidMount() {
-        window.addEventListener("resize", this.resize.bind(this));
-        this.resize();
-    }
-
-    toggleEditMode() {
-        console.log(this.state)
-        if (this.state.currentMode === "default") {
-            this.setState({
-                currentMode: "edit"
-            })
-        } else {
-            this.setState({
-                currentMode: "default"
-            })
-        }
-    }
-
-    toggleAddMode() {
-
-        if (this.state.currentMode === "default") {
-            this.setState({
-                currentMode: "add"
-            })
-        } else {
-            this.setState({
-                currentMode: "default"
-            })
-        }
-    }
-
-    resize() {
-        const md = 768;
-        if (window.innerWidth >= md) {
-            this.setState({
-                editable: true
-            })
-        } else {
-            this.setState({
-                editable: false
-            })
-        }
-    }
-    render() {
-        if (this.state.currentMode === "edit") {
-            return (
-                <TagMacrosEditMode toggleEditMode={this.toggleEditMode} currentTags={[
-                    { type: "base", value: ":fast" },
-                    { type: "specific", value: "@agreement(abc)" },
-                    { type: "specific", value: "@birthdayAfter(09-10)" },
-                    { type: "specific", value: "@dorm(abc)" },
-                    { type: "multiple", value: "+level(3)" }]}></TagMacrosEditMode>
-            )
-        }
-
-        if (this.state.currentMode === "add") {
-            return (
-                <TagMacrosAddMode toggleEditMode={this.toggleAddMode}></TagMacrosAddMode>
-            )
-        }
-        return (
-            <div className="container-fluid tagMacros">
-                <div className="d-flex flex-nowrap justify-content-between">
-                    <div className="col-3">
-                        Name
-                    </div>
-                    <div className="tagMacrosTagsBox">
-                        Tags
-                    </div>
-                    <div className="ms-auto col-auto">
-                        <IconButtonWithText className={"invert"} icon={<i className="bi bi-plus-circle-fill"></i>} label={"Add Macro"} onClick={this.toggleAddMode}></IconButtonWithText>
-                    </div>
-                </div>
-                <div className="d-flex flex-nowrap justify-content-between">
-                    <div className="col-3">
-                        <StdInput prefix={"# "} value={"default"} editable={false} showIndicator={false}></StdInput>
-                    </div>
-                    <div className="tagMacrosTagsBox">
-                        <TagsBox>
-                            <SearchTags type={"base"} showRemove={false}>:active</SearchTags>
-                        </TagsBox>
-                    </div>
-                    <div className="ms-auto  col-auto">
-                    </div>
-                </div>
-                <div className="d-flex flex-nowrap justify-content-between">
-                    <div className="col-3">
-                        <StdInput prefix={"# "} value={"test"} editable={this.state.editable} showIndicator={false}></StdInput>
-                    </div>
-                    <div className="tagMacrosTagsBox">
-                        <TagsBox truncate={true}>
-                            <SearchTags type={"specific"} showRemove={true}>@lastActivityBefore(10-10-1990)</SearchTags>
-                            <SearchTags type={"multiple"} showRemove={true}>+level(3)</SearchTags>
-                            <SearchTags type={"multiple"} showRemove={true}>+lastActivityBefore(10-10-1990)</SearchTags>
-                            <SearchTags type={"exclude"} showRemove={true}>(!abc)</SearchTags>
-                            <SearchTags type={"specific"} showRemove={true}>@lastActivityBefore(10-10-1990)</SearchTags>
-                            <SearchTags type={"multiple"} showRemove={true}>+level(3)</SearchTags>
-                            <SearchTags type={"multiple"} showRemove={true}>+lastActivityBefore(10-10-1990)</SearchTags>
-                            <SearchTags type={"exclude"} showRemove={true}>(!abc)</SearchTags>
-                        </TagsBox>
-                    </div>
-                    <div className="align-items-start">
-                        <IconButton icon={<i className="bi bi-pencil"></i>} className={"invert"} onClick={this.toggleEditMode}></IconButton>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-}
-
-export class TagMacrosEditMode extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.isTextEmpty = this.isTextEmpty.bind(this);
-        this.setStep = this.setStep.bind(this);
-        this.onCancelClick = this.onCancelClick.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-        this.onTagSelect = this.onTagSelect.bind(this);
-        this.state = {
-            textEmpty: true,
-            step: 1,
-            macroName: "",
-            currentTags: this.props.currentTags,
-            tagType: "",
-            selectedTag: "",
-            suggestions: searchSuggestions,
-            placeholder: "",
-            tagInteralValue: ""
-        }
-    }
-
-    onCancelClick(tagToRemove) {
-        this.setState({
-            currentTags: this.state.currentTags.filter((tag) => tag !== tagToRemove),
-        })
-    }
-
-    onTagSelect = (tag) => {
-        console.log("value: " + tag.value, "type: " + tag.type);
-        this.setState({
-            tagType: tag.type,
-            selectedTag: tag.value
-        })
-
-        if (tag.value.slice(1) === "gender") {
-            this.setState({
-                suggestions: [{ value: "Male", label: "Male", type: "" }, { value: "Female", label: "Female", type: "" }],
-                placeholder: "Enter a gender",
-            })
-        }
-    }
-
-    tagSelectCallBack = (tag) => {
-        this.setState({
-            currentTags: [...this.state.currentTags, tag],
-            suggestions: searchSuggestions,
-            placeholder: "",
-        })
-    }
-
-    onSubmit(tagToAdd) {
-        console.log("value" + tagToAdd.value, tagToAdd.type);
-        this.setState({
-            currentTags: [...this.state.currentTags, tagToAdd],
-            selectedTag: "",
-            tagType: "",
-        })
-    }
-
-    setStep(step) {
-        this.setState({
-            step: step,
-            textEmpty: true
-        })
-    }
-
-    isTextEmpty(e) {
-        console.log(e.target.value)
-        if (e.target.value === undefined || e.target.value === "") {
-            this.setState({
-                textEmpty: true,
-                tagInteralValue: ""
-            })
-        } else {
-            this.setState({
-                textEmpty: false,
-                tagInteralValue: e.target.value
-            })
-
-        }
-    }
-
-    render() {
-        return (
-            <div className="container-fluid tagMacros d-flex flex-column align-items-center">
-                <div className="col-12 d-flex justify-content-between align-items-center">
-                    Editing Macro: {"Test"}
-                </div>
-
-                {this.state.step === 1 ?
-                    // Step 1
-                    <div className="tagMacros col-xl-6 col-lg-8 col-12 row-cols-1 justify-content-stretch align-items-stretch">
-                        <div className="d-flex flex-column justify-content-center align-items-center">
-                            <h6 className="text-center">
-                                Current Tags
-                            </h6>
-                            <DivSpacing spacing={1}></DivSpacing>
-                            <TagsBox className={"tagCloud"}>
-                                {this.state.currentTags.map((tag, index) => {
-                                    return <SearchTags type={tag.type} key={index} onCancelClick={() => this.onCancelClick(tag)}>{tag.value}</SearchTags>
-                                })}
-                            </TagsBox>
-                        </div>
-                        <div className={"col-12"}>
-                            <StdInput tagSelectCallBack={this.tagSelectCallBack} label={"Add Tags"} placeholder={this.state.placeholder} type={"dropdown-tags"} onTagSelect={this.onTagSelect} options={this.state.suggestions} editable={true} showIndicator={false} showSaveBtn={false} isTextEmpty={this.isTextEmpty}></StdInput>
-                        </div>
-                        <div className="d-flex col-12 justify-content-center">
-                            <div className={"col-md-4 col-12 align-self-center"}>
-                                <div className={"row"}>
-                                    <div className={"col-6"}>
-                                        <StdButton className="borderless w-100" onClick={this.props.toggleEditMode}>Cancel</StdButton>
-                                    </div>
-                                    <div className={"col-6"}>
-                                        {this.state.textEmpty ?
-                                            <StdButton className=" primary w-100" onClick={() => { this.setStep(2) }}>Submit</StdButton> : <StdButton className=" secondary w-100" disabled={this.state.selectedTag === ""} onClick={() => this.onSubmit({ value: this.state.selectedTag + "(" + this.state.tagInteralValue + ")", type: this.state.tagType })}>Add Tag</StdButton>}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    :
-                    // Step 2
-                    <div className="tagMacros col-xl-6 col-lg-8 col-12 justify-content-stretch align-items-center">
-                        <div className={"col-12"}>
-                            <StdInput label={"Macro Name"} editable={true} showIndicator={false} showSaveBtn={false} value={this.state.macroName} isTextEmpty={this.isTextEmpty}></StdInput>
-                        </div>
-                        <div className="d-flex flex-column justify-content-center align-items-center">
-                            <h6 className="text-center">
-                                Current Tags
-                            </h6>
-                            <DivSpacing spacing={1}></DivSpacing>
-                            <TagsBox className={"tagCloud"} onClick={() => { this.setStep(1) }}>
-                                <SearchTags type={"specific"} showRemove={false}>@lastActivityBefore(10-10-1990)</SearchTags>
-                                <SearchTags type={"multiple"} showRemove={false}>+level(3)</SearchTags>
-                                <SearchTags type={"multiple"} showRemove={false}>+lastActivityBefore(10-10-1990)</SearchTags>
-                                <SearchTags type={"exclude"} showRemove={false}>(!abc)</SearchTags>
-                                <SearchTags type={"specific"} showRemove={false}>@lastActivityBefore(10-10-1990)</SearchTags>
-                                <SearchTags type={"multiple"} showRemove={false}>+level(3)</SearchTags>
-                                <SearchTags type={"multiple"} showRemove={false}>+lastActivityBefore(10-10-1990)</SearchTags>
-                                <SearchTags type={"exclude"} showRemove={false}>(!abc)</SearchTags>
-                            </TagsBox>
-                        </div>
-                        <div className="d-flex col-12 justify-content-center">
-                            <div className={"col-md-4 col-12 align-self-center"}>
-                                <div className={"row"}>
-                                    <div className={"col-6"}>
-                                        <StdButton className="borderless w-100" onClick={() => { this.setStep(1) }}>Back</StdButton>
-                                    </div>
-                                    <div className={"col-6"}>
-                                        <StdButton className=" primary w-100" onClick={() => { this.onSubmit({ type: this }) }} disabled={this.state.textEmpty ? true : false}>Submit</StdButton>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        )
-    }
-}
-TagMacrosEditMode.defaultProps = {
-    currentTags: [],
-    suggestions: [],
-}
-
-export class TagMacrosAddMode extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.isTextEmpty = this.isTextEmpty.bind(this);
-        this.setStep = this.setStep.bind(this);
-        this.state = {
-            textEmpty: true,
-            step: 1,
-            macroName: "",
-        }
-    }
-
-    setStep(step) {
-        this.setState({
-            step: step,
-            textEmpty: true
-        })
-    }
-
-    isTextEmpty(e) {
-        console.log(e.target.value)
-        if (e.target.value === undefined || e.target.value === "") {
-            this.setState({
-                textEmpty: true
-            })
-        } else {
-            this.setState({
-                textEmpty: false
-            })
-        }
-    }
-
-    render() {
-        return (
-            <div className="container-fluid tagMacros d-flex flex-column align-items-center">
-                <div className="col-12 d-flex justify-content-between align-items-center">
-                    Creating New Macro
-                </div>
-                {this.state.step === 1 ?
-                    // Step 1
-                    <div className="tagMacros col-md-4 col-12 justify-content-stretch align-items-center">
-                        <div className="d-flex flex-column justify-content-center align-items-center">
-                            <h6 className="text-center">
-                                Current Tags
-                            </h6>
-                            <DivSpacing spacing={1}></DivSpacing>
-                            <TagsBox className={"tagCloud"}>
-                            </TagsBox>
-                        </div>
-                        <div className={"col-12"}>
-                            <StdInput label={"Add Tags"} type={"dropdown-tags"} options={searchSuggestions} editable={true} showIndicator={false} showSaveBtn={false} isTextEmpty={this.isTextEmpty}></StdInput>
-                        </div>
-                        <div className="d-flex col-12 justify-content-center">
-                            <div className={"col-md-4 col-12 align-self-center"}>
-                                <div className={"row"}>
-                                    <div className={"col-6"}>
-                                        <StdButton className=" borderless w-100" onClick={this.props.toggleEditMode}>Cancel</StdButton>
-                                    </div>
-                                    <div className={"col-6"}>
-                                        {this.state.textEmpty ?
-                                            <StdButton className=" primary w-100" onClick={() => { this.setStep(2) }}>Submit</StdButton> : <StdButton className=" secondary w-100">Add Tag</StdButton>}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    :
-                    // Step 2
-                    <div className="tagMacros col-md-4 col-12 justify-content-stretch align-items-center">
-                        <div className={"col-12"}>
-                            <StdInput label={"Macro Name"} editable={true} showIndicator={false} showSaveBtn={false} value={this.state.macroName} isTextEmpty={this.isTextEmpty}></StdInput>
-                        </div>
-                        <div className="d-flex flex-column justify-content-center align-items-center">
-                            <h6 className="text-center">
-                                Current Tags
-                            </h6>
-                            <DivSpacing spacing={1}></DivSpacing>
-                            <TagsBox className={"tagCloud"}>
-                            </TagsBox>
-                        </div>
-                        <div className="d-flex col-12 justify-content-center">
-                            <div className={"col-md-4 col-12 align-self-center"}>
-                                <div className={"row"}>
-                                    <div className={"col-6"}>
-                                        <StdButton className="borderless w-100" onClick={() => { this.setStep(1) }}>Back</StdButton>
-                                    </div>
-                                    <div className={"col-6"}>
-                                        <StdButton className=" primary w-100" disabled={this.state.textEmpty ? true : false}>Submit</StdButton>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>}
-            </div>
-        )
-    }
 }
 
 export class TableFooter extends React.Component {
@@ -1274,7 +618,7 @@ export class TableQuickAction extends React.Component {
     render() {
 
         return (
-            <div className="d-flex quickActionsPanel align-items-center">
+            <div className="flex quickActionsPanel items-center">
                 <ActionsButton onClick={() => {
                     if (this.state.showActionsMenu) {
                         this.setState({
@@ -1302,18 +646,25 @@ export class TableQuickAction extends React.Component {
         )
     }
 }
-
-export class BottomMenu extends React.Component {
-    render() {
-        return (
-            this.props.showBottomMenu ?
-                <SlideDrawer show={this.props.show} direction={"bot"} columns={1} settings={settings}>
-                    {this.props.actions.map((action, index) => {
+export class BottomMenu extends React.Component{
+    render(){
+        return(
+            this.props.showBottomMenu ? 
+            <div className="dropdown dropdown-top dropdown-hover dropdown-start max-h-min sticky bottom-0 left-0">
+                <label tabindex="0" className="btn m-1 btn-primary btn-circle"><i className="bi bi-grid-3x3-gap-fill"></i></label>
+                <ul tabindex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box">
+                {this.props.actions.map((action, index) => {
                         return (
-                            <DrawerItemNonLink key={index} label={action.label} width={"25"} onClick={action.onClick}></DrawerItemNonLink>
+                            <button className="btn btn-ghost w-full text-base-content" key={index} onClick={action.onClick}>
+                                {action.label}
+                            </button>
                         )
 
-                    })}</SlideDrawer> : <div></div>
+                    })}
+                </ul>
+            </div>
+            :
+            ""
         )
     }
 }

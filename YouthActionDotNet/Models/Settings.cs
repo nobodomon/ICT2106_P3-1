@@ -14,10 +14,10 @@ namespace YouthActionDotNet.Models
         public UserSettings(){
             ColumnSettings = new Dictionary<string, ColumnHeader>();
             FieldSettings = new Dictionary<string, InputType>();
-            FieldSettings.Add("UserId", new InputType { type = "number", displayLabel = "User Id", editable = false, primaryKey = true });
+            FieldSettings.Add("UserId", new InputType { type = "text", displayLabel = "User Id", editable = false, primaryKey = true });
             FieldSettings.Add("username", new InputType { type = "text", displayLabel = "Username", editable = true, primaryKey = false });
-            FieldSettings.Add("Email", new InputType { type = "text", displayLabel = "Email", editable = true, primaryKey = false });
-            FieldSettings.Add("Password", new InputType { type = "text", displayLabel = "Password", editable = true, primaryKey = false });
+            FieldSettings.Add("Email", new InputType { type = "email", displayLabel = "Email", editable = true, primaryKey = false });
+            FieldSettings.Add("Password", new InputType { type = "password", displayLabel = "Password", editable = true, primaryKey = false });
             FieldSettings.Add("Role", new DropdownInputType { type = "dropdown", displayLabel = "Role", editable = true, primaryKey = false, options = new List<DropdownOption> {
                 new DropdownOption { value = "Admin", label = "Admin" },
                 new DropdownOption { value = "Employee", label = "Employee" },

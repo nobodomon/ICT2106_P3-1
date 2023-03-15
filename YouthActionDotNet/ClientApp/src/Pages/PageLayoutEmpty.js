@@ -6,6 +6,7 @@ import SlideDrawer, { DrawerItemNonLink } from "../Components/sideNav";
 import { Cell, ListTable, HeaderRow, ExpandableRow } from "../Components/tableComponents";
 import {CSVLink} from "react-csv";
 import U from "../Utilities/utilities";
+import { AddEntry, DeleteEntry, GenerateSpreadsheet } from "../Components/common";
 
 export const searchSuggestions = [
 ]
@@ -169,7 +170,7 @@ export default class DatapageLayoutEmpty extends React.Component {
     render() {
         return (
             this.state.perms?.Read ? 
-            <div className="d-flex flex-column container-fluid listPageContainer h-100">
+            <div className="flex flex-col w-full listPageContainer h-full p-4">
                 {this.props.error !== "" && 
                     <div className="listPageContainer-error">
                         {this.props.error}
@@ -179,7 +180,7 @@ export default class DatapageLayoutEmpty extends React.Component {
                         ></IconButton>
                     </div>
                 }
-                <div className="col-12 d-flex flex-column h-100">
+                <div className="w-full h-full flex flex-col">
                     
                     <TableHeader actions={
                         this.state.tableHeaderActions
@@ -272,15 +273,15 @@ class TableHeader extends React.Component {
         return (
             <div className="tableHeader">
                 <div className={"tableHeaderActions " + (this.props.component === "" ? "borderRadius" : "topBorderRadius")}>
-                    <div className="d-flex justify-content-end align-items-center">
+                    <div className="flex justify-end items-center">
                         {this.props.showBottomMenu ? <div /> :
                             <div className="tableTitleContainer">
-                                <div className="tableTitlePulseAnimation-1" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
+                                {/* <div className="tableTitlePulseAnimation-1" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
                                 </div>
                                 <div className="tableTitlePulseAnimation-2" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
                                 </div>
                                 <div className="tableTitlePulseAnimation-3" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
-                                </div>
+                                </div> */}
                                 <span className="tableTitle">{this.props.settings.title}</span>
                             </div>}
                         <SearchBar className={"searchHotBar"} onClick={this.toggleSearchBar} toggleTagMacros={this.props.handles} searchCallBack={this.searchCallBack} persist={this.props.showBottomMenu}>
@@ -387,276 +388,15 @@ class HeaderExpansionPane extends React.Component {
     render() {
         return (
             <div className="p-4 headerExpansionPane">
-                <div className={"panelCloseBtn d-flex justify-content-between align-items-center"}>
+                <div className={"w-full flex justify-between items-center"}>
                     <h1>{this.props.title}</h1>
-                    <IconButtonWithText className={"invert"} icon={<i className="bi bi-x"></i>} onClick={this.props.handleClose} label={"Close"}></IconButtonWithText>
+                    <IconButtonWithText icon={<i className="bi bi-x"></i>} onClick={this.props.handleClose} label={"Close"}></IconButtonWithText>
                 </div>
+                <div className="divider">Fill up the required information below</div>
                 {this.props.children}
             </div>
         )
     }
-
-
-}
-
-class AddEntry extends React.Component{
-    state = {
-        courseToAdd: {},
-    }
-
-    onChange = (field, value) => {
-        var tempCourse = this.state.courseToAdd;
-        tempCourse[field] = value;
-        this.setState({
-            courseToAdd: tempCourse
-        })
-    }
-
-    uploadFile = async (file) => {
-        console.log(file);
-        const formData = new FormData();
-        formData.append("file", file.FileUrl);
-        
-        return await fetch("/api/File/Upload",
-            {
-                method: "POST",
-                body: formData,
-            }
-        ).then((res) => {
-            console.log(res);
-            return res.json();
-        }).catch(err => {
-            console.log(err);
-        })
-    }
-
-    createCourse = async (courseToAdd) => {
-
-        return fetch(this.props.settings.api + "Create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(courseToAdd),
-        }).then((res => {
-            return res.json();
-        })).catch((err) => {
-            console.log(err);
-        })
-    }
-
-    handleCourseCreation = async (e) => {
-        e.preventDefault();
-        var courseToAdd = this.state.courseToAdd;
-        var fileUploadFields = [];
-        
-        for(const field of Object.keys(this.props.fieldSettings)){
-            if (this.props.fieldSettings[field].type === "file") {
-                fileUploadFields.push(field);
-            }
-        }
-
-        for(const field of fileUploadFields){
-            try {
-                const res = await this.uploadFile(courseToAdd[field]);
-                if(res.success){
-                    courseToAdd[field] = res.data;
-                }
-            }catch(e){
-                this.props.requestError(e);
-            }
-        }
-        try {
-            const res = await this.createCourse(courseToAdd);
-            if(res.success){
-                this.props.requestRefresh();
-            }else{
-                this.props.requestError(res.message);
-            }
-        }catch(e){
-            this.props.requestError(e);
-        }
-    }
-
-    render(){
-        return (
-            <div className="container-fluid addEntry">
-                <form className={"addEntry-inputFields"} onSubmit={this.handleCourseCreation}>
-                {Object.keys(this.props.fieldSettings).map(
-                    (key, index) => {
-                        return (this.props.fieldSettings[key].primaryKey? "" : 
-                            <StdInput 
-                            label = {this.props.fieldSettings[key].displayLabel}
-                            type={this.props.fieldSettings[key].type}
-                            enabled = {true}
-                            fieldLabel={key}
-                            onChange = {this.onChange}
-                            options={this.props.fieldSettings[key].options}
-                            dateFormat = {this.props.fieldSettings[key].dateFormat}
-                            allowEmpty = {true}
-                            toolTip = {this.props.fieldSettings[key].toolTip}
-                            >
-                            </StdInput>)
-                    }
-                )}
-                <StdButton type={"submit"}>Submit</StdButton>
-            
-                </form>
-                </div>
-        )
-    }
-}
-
-class DeleteEntry extends React.Component{
-    state = {
-        courseToDelete: {},
-    }
-
-    onChange = (field, value) => {
-        var tempCourse = this.state.courseToDelete;
-        tempCourse[field] = value;
-        this.setState({
-            courseToDelete: tempCourse
-        })
-    }
-
-    deleteCourse = async (courseToDelete) => {
-        console.log(courseToDelete);
-        return fetch(this.props.settings.api + "Delete", {
-            method: "Delete",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(courseToDelete),
-        }).then((res => {
-            return res.json();
-        }));
-    }
-
-    handleCourseDeletion = async (e) => {
-        e.preventDefault();
-        await this.deleteCourse(this.state.courseToDelete).then((content) => {
-            if(content.success){
-                this.props.requestRefresh();
-            }else{
-                this.props.requestError(content.message);
-            }
-        })
-    }
-
-    render(){
-        return (
-            <div className="container-fluid deleteEntry">
-                <form className={"deleteEntry-inputFields"} onSubmit={this.handleCourseDeletion}>
-                {Object.keys(this.props.fieldSettings).map(
-                    (key, index) => {
-                        return (this.props.fieldSettings[key].primaryKey? 
-                            <StdInput 
-                            label = {this.props.fieldSettings[key].displayLabel}
-                            type={"text"}
-                            enabled = {true}
-                            fieldLabel={key}
-                            onChange = {this.onChange}
-                            options={this.props.fieldSettings[key].options}
-                            dateFormat = {this.props.fieldSettings[key].dateFormat}
-                            >
-                            </StdInput> : "")
-                    }
-                )}
-                <StdButton type={"submit"}>Submit</StdButton>
-            
-                </form>
-            </div>
-        )
-    }
-}
-
-class GenerateSpreadsheet extends React.Component{
-    state={
-        columns: [],
-        spreadsheetReady: false,
-    }
-    
-    componentDidMount(){
-        let columns = [];
-        for(var i = 0; i < Object.keys(this.props.fieldSettings).length; i++){
-            columns.push(
-                {
-                    label: Object.keys(this.props.fieldSettings)[i],
-                    key: Object.keys(this.props.fieldSettings)[i],
-                }
-            );
-        }
-        this.setState({
-            columns: columns
-        });
-    }
-
-    reOrderColumns = (index, direction) => {
-        var tempColumns = this.state.columns;
-        if(direction === "up"){
-            if(index > 0){
-                var temp = tempColumns[index];
-                tempColumns[index] = tempColumns[index - 1];
-                tempColumns[index - 1] = temp;
-            }
-        } else {
-            if(index < tempColumns.length - 1){
-                var temp = tempColumns[index];
-                tempColumns[index] = tempColumns[index + 1];
-                tempColumns[index + 1] = temp;
-            }
-        }
-        this.setState({
-            columns: tempColumns
-        });
-    }
-
-    generateSpreadsheet = () =>{
-        this.setState({
-            spreadsheetReady : false
-        })
-
-        // Fake loading time to show false sense of progress
-        setTimeout(() => {
-            this.setState({
-                spreadsheetReady : true
-            })}, 1000);
-    }
-
-    render(){
-        return (
-            <div className="container-fluid generate-spreadsheet">
-                <div className="column-order">
-                    {this.state.columns.map((column, index) => {
-                        return <div className="column">
-                            <div className="column-order-buttons">
-                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-up"></i>} onClick={() => this.reOrderColumns(index, "up")}></IconButton>
-                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-down"></i>} onClick={() => this.reOrderColumns(index, "down")}></IconButton>
-                            </div>
-                            <div className="column-name">{column.label}</div>
-                        </div>
-                    })}     
-                </div>
-                <div className="generate-actions">
-                    <StdButton onClick={() => this.generateSpreadsheet()}>
-                        Generate Spreadsheet
-                    </StdButton>
-
-                    {this.state.spreadsheetReady ?
-                    
-                    <CSVLink data={this.props.data} className={"forget-password"} headers={this.state.columns} filename={this.props.settings.title + ".csv"}>Download</CSVLink>
-                    :
-                    <div className="spinner-border" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                    }    
-                </div>
-            </div>
-        )
-    }
-
-    
 }
 
 class TableFooter extends React.Component {
@@ -859,7 +599,7 @@ class SearchBar extends React.Component {
 
         return (
             <div className={this.props.className}>
-                <div className={" justify-content-end d-flex align-items-center"}>
+                <div className={" justify-end items-center flex"}>
                     <div className="searchBar">
                         <SearchButton onClick={this.toggle} className={this.props.invert ? "invert" : ""} icon={<i className="bi bi-search"></i>} toolTip={this.props.toolTip} showToolTip={this.state.showToolTip} onMouseEnter={this.toggleToolTip} onMouseLeave={
                             this.toggleToolTip}></SearchButton>
@@ -867,8 +607,8 @@ class SearchBar extends React.Component {
                     </div>{this.state.selectedTag !== "" &&
                         <SearchTags showEdit={false} onCancelClick={this.onCancelClick} type={this.state.tagType}>{this.state.selectedTag}</SearchTags>
                     }
-                    <div className={"form-control bg-transparent border-transparent p-0 w-full " + this.state.inputClasses} onAnimationEnd={this.focus}>
-                        <input type={"text"} className={"input input-primary border-transparent grow hover:border-transparent w-full"} placeholder={this.state.placeholder} ref={this.searchInput} onChange={this.handleSearchQueryChange} onKeyDown={(e) => this.handleKeydown(e, this.state.searchQuery)}></input>
+                    <div className={"form-control bg-transparent border-transparent text-base-content p-0 w-full " + this.state.inputClasses} onAnimationEnd={this.focus}>
+                        <input type={"text"}  className={"input input-primary border-transparent hover:border-transparent text-base-content " + (this.state.expanded ? "w-full" : "w-0")} placeholder={this.state.placeholder} ref={this.searchInput} onChange={this.handleSearchQueryChange} onKeyDown={(e) => this.handleKeydown(e, this.state.searchQuery)}></input>
                     </div>
                 </div>
             </div>

@@ -51,19 +51,6 @@ export class DrawerItem extends React.Component {
   state = {
     currentActive: this.props.currentActive
   }
-  constructor(props){
-    super(props);
-    if(this.props.type === "favourite"){
-      this.state = {
-        classType : "favourite"
-      }
-    }
-    if(this.props.type === "default"){
-      this.state = {
-        classType : ""
-      }
-    }
-  }
 
   componentDidUpdate(prevProps){
       if(prevProps.currentActive !== this.props.currentActive){
@@ -87,14 +74,25 @@ export class DrawerItem extends React.Component {
     console.log("clicked")
     this.props.setActive?.(this.props.label);
   }
-  render() {
-
+  render() {  
+    const active = (this.props.currentActive === this.props.label)
     return (
-      <Link className={"drawerItem"} to={this.props.to} style={{ minWidth: this.props.width, maxWidth: this.props.width }} onClick={this.handleOnClick}>
-        {this.props.logo != undefined ?
-          <img className={'drawerItem-logo ' + this.state.classType} src={this.props.logo} width={"56px"} height={"56px"}></img> : <></>}
-        {this.props.label}
-      </Link>
+      <li>
+        <Link to={this.props.to}>
+          
+          <div className={"flex items-center gap-4"}>
+          {this.props.logo != undefined ?
+            <div className='avatar'>
+              <div className={"w-10 p-2 rounded-full ring-offset-base-100 ring-offset-4 " + (active ? " bg-primary":" bg-neutral")}>
+                <img src={this.props.logo} className="w-8"/> : <></>
+              </div>
+            </div>
+          : <></>}
+          
+          {this.props.label}
+          </div>
+        </Link>        
+      </li>
     )
   }
 }

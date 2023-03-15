@@ -67,25 +67,6 @@ export class BodyContainer extends React.Component {
     }
 }
 
-export class LimitedItemBodyContainer extends React.Component {
-    render() {
-        var itemCount = React.Children.count(this.props.children);
-
-        return (
-            <div className="d-flex col-12 col-lg-10 cardBg justify-content-center m-4">
-                <div className="d-flex col-12 col-lg-8  justify-content-center align-items-stretch flex-wrap">
-                    <div className="container">
-                        <div className="row align-items-stretch p-4">
-                            {this.props.children}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-
-
-    }
-}
 
 
 export class ListTile extends React.Component {
@@ -95,13 +76,11 @@ export class ListTile extends React.Component {
         leading: <div />
     }
     render() {
-        var commonClassName = "d-flex p-2"
         return (
-            <div className=" d-flex justify-content-start align-items-center">
+            <div className="flex items-center gap-4">
                 {this.props.leading}
-                <div className={this.props.singleLine ? commonClassName + " justify-content-between align-items-center" : commonClassName + " align-items-start justify-content-start flex-column"}>
+                <div className={"flex flex-col justify-content-between align-items-center"}>
                     <div className="mb-0">{this.props.title}</div>
-                    <p className="mb-0">{this.props.subtitle}</p>
                 </div>
             </div>
         )

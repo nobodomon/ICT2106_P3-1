@@ -677,7 +677,7 @@ class StdDateTimeBox extends React.Component {
       <input
           className="input input-primary input-bordered grow"
           disabled={this.props.editable}
-          type="datetime"
+          type="datetime-local"
           ref={this.primaryInput}
           autoComplete={this.props.autoComplete}
           placeholder={""}
@@ -880,7 +880,7 @@ class StdMultiSelect extends React.Component {
     return (
       <div
         className={
-          "stdInputGroup d-flex align-items-center" +
+          "stdInputGroup flex items-center" +
           " " +
           (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }

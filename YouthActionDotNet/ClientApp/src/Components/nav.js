@@ -7,18 +7,18 @@ import { ListTile } from "../Pages/DefaultPage";
 
 export default class Nav extends React.Component {
     render() {
-        const baseNavClasses = "navbar navbar-expand-lg sticky-top d-flex justify-content-center container-fluid" + this.props.classes;
         return (
-            <nav className={baseNavClasses} style={{ height: "56px" }}>
-                <div className="d-flex align-items-center justify-content-between row-cols-md-3 col-12">
-                    <Hamburger onClick={this.props.toggle} show={this.props.show}></Hamburger>
-                    <Link className={"navbar-brand row "} to="/">
-                        {this.props.title}
-                    </Link>
-
-                    <UserPanel user={this.props.user}></UserPanel>
-                </div>
-            </nav>
+            <div className={"w-full navbar flex justify-between items-center"}>
+                <div className="flex-none lg:hidden">
+                    <label htmlFor="main-drawer" className="btn btn-square btn-ghost">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </label>
+                </div> 
+                <a className="btn btn-ghost" to={"/"}>
+                    {this.props.title}
+                </a>
+                <UserPanel user={this.props.user}></UserPanel>
+            </div>
         )
     }
 }
@@ -59,7 +59,7 @@ export class UserPanel extends React.Component {
 
     render() {
         return (
-            <div className={"userPanel align-items-center"}>
+            <div className={"flex items-center"}>
                 {this.state.showUserDetail &&
                 <IconButtonAsLink to={"/"} className={"invert"} icon={<i className="bi bi-house"></i>}></IconButtonAsLink>
                 }

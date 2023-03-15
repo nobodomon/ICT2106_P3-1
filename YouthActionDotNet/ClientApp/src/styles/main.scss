@@ -2042,29 +2042,6 @@ nav {
         min-height: none;
     }
 
-    &>.searchTag {
-
-        &.base {
-            border: 1px solid $base;
-        }
-
-        &.specific {
-            border: 1px solid $specific;
-        }
-
-        &.multiple {
-            border: 1px solid $multiple;
-        }
-
-        &.exclude {
-            border: 1px solid $exclude;
-        }
-
-        &.default {
-            border: 1px solid $default;
-        }
-    }
-
     @keyframes expand {
         0% {
             flex-grow: 0;

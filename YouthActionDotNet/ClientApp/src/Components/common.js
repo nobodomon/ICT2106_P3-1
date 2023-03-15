@@ -6,6 +6,9 @@ import moment from "moment";
 
 import footer from "../Assets/footer.png";
 import { Loading } from "./appCommon";
+import { StdInput } from "./input";
+
+import {CSVLink} from "react-csv";
 
 export class DivSpacing extends React.Component {
     state = {
@@ -235,7 +238,7 @@ export class SearchBar extends React.Component {
 
         return (
             <div className={this.props.className}>
-                <div className={" justify-content-end d-flex align-items-center"}>
+                <div className={"flex justify-end items-center"}>
                     <div className="searchBar">
                         <SearchButton onClick={this.toggle} className={this.props.invert ? "invert" : ""} icon={<i className="bi bi-search"></i>} toolTip={this.props.toolTip} showToolTip={this.state.showToolTip} onMouseEnter={this.toggleToolTip} onMouseLeave={
                             this.toggleToolTip}></SearchButton>
@@ -252,7 +255,7 @@ export class SearchBar extends React.Component {
                             <input
                                 tabindex="0" 
                                 type={"text"}
-                                className={"input input-primary border-transparent grow hover:border-transparent"}
+                                className={"input input-primary border-transparent hover:border-transparent text-base-content " + (this.state.expanded ? "w-full" : "w-0")}
                                 placeholder={this.state.placeholder}
                                 ref={this.searchInput} 
                                 onChange={this.handleSearchQueryChange}
@@ -261,9 +264,9 @@ export class SearchBar extends React.Component {
                         </div>
                         
                         {this.state.selectedTag === "" ?
-                            <div tabindex="0" class="menu dropdown-content bg-neutral p-2 shadow grid grid-cols-3 rounded-box w-full mt-2 p-1">
+                            <div tabindex="0" class="menu dropdown-content bg-base-100 p-2 shadow grid grid-cols-3 rounded-box w-full mt-2 p-1">
                             {this.props.suggestions.map((suggestion, index) => {
-                                return <div className="btn btn-ghost"
+                                return <div className="btn btn-ghost justify-start text-base-content"
                                             onClick={() => this.setPrimaryInput({type: suggestion, value: suggestion})}
                                             key={index}>
                                             {suggestion}
@@ -385,11 +388,11 @@ export class StdSearchBar extends React.Component {
 
         return (
             <div className={this.props.className}>
-                <div className={" justify-content-end d-flex align-items-center"}>
+                <div className={"flex items-center justify-end"}>
                     <div className="searchBar">
                         <SearchButton onClick={this.toggle} className={this.props.invert ? "invert" : ""} hasToolTip={false} icon={<i className="bi bi-search"></i>}></SearchButton>
                     </div>
-                    <div className={"d-flex align-items-center " + this.state.inputClasses} onAnimationEnd={this.focus}>
+                    <div className={"flex items-center " + this.state.inputClasses} onAnimationEnd={this.focus}>
                         <input type={"text"} className={"SearchField"} placeholder={this.state.placeholder} ref={this.searchInput} onChange={this.handleSearchQueryChange} onKeyDown={(e) => this.handleKeydown(e, { type: this.state.tagType, value: this.state.selectedTag + "(" + this.searchInput.current.value + ")" })}></input>
 
                         {this.props.children}
@@ -407,19 +410,9 @@ StdSearchBar.defaultProps = {
 export class SearchButton extends React.Component {
     render() {
         return (
-            <SizedBox width={this.props.size} height={this.props.size} className={"searchButton"} >
-                <button className={"iconButton " + this.props.className} onClick={this.props.onClick} style={{ width: this.props.size, height: this.props.size }} onMouseEnter={this.props.onMouseEnter} onMouseLeave={this.props.onMouseLeave}>
-                    {this.props.icon}
-                </button>
-                {this.props.hasToolTip &&
-
-                    <div className="tooltiptext">
-                        {this.props.toolTip}
-
-                    </div>
-                }
-
-            </SizedBox>
+            <button className={"btn btn-square btn-ghost hover:text-accent"} onClick={this.props.onClick} style={{ width: this.props.size, height: this.props.size }} onMouseEnter={this.props.onMouseEnter} onMouseLeave={this.props.onMouseLeave}>
+                {this.props.icon}
+            </button>
         )
     }
 }
@@ -558,51 +551,33 @@ ActionsButton.defaultProps = {
 export class IconButton extends React.Component {
     render() {
         return (
-            <SizedBox width={this.props.size} height={this.props.size} className={"align-items-center d-flex justify-content-center "}>
-                <button className={"iconButton " + this.props.className} onClick={this.props.onClick} title={this.props.title}>
-                    {this.props.icon}
-                </button>
-            </SizedBox>
-        )
-    }
-}
-IconButton.defaultProps = {
-    className: "",
-    size: "32px",
-}
-export class IconButtonAsLink extends React.Component {
-    render() {
-        return (
-            <SizedBox width={this.props.size} height={this.props.size} className={"align-items-center d-flex justify-content-center "}>
-                <Link to={this.props.to} className={"iconButton " + this.props.className} onClick={this.props.onClick} title={this.props.title}>
-                    {this.props.icon}
-                </Link>
-            </SizedBox>
-        )
-    }
-}
-IconButtonAsLink.defaultProps = {
-    className: "",
-    size: "32px",
-}
-
-export class IconButtonWithText extends React.Component {
-    render() {
-        return (
-            <button className={"align-items-center d-flex justify-content-center iconButton " + this.props.className} onClick={this.props.onClick}>
-                <SizedBox width={this.props.size} height={this.props.size} className={"align-items-center d-flex justify-content-center "}>
-                    <div>
-                        {this.props.icon}
-                    </div>
-                </SizedBox>
-                {this.props.label}
+            
+            <button className={"btn btn-ghost btn-square  hover:text-accent"} onClick={this.props.onClick} title={this.props.title}>
+                {this.props.icon}
             </button>
         )
     }
 }
-IconButtonWithText.defaultProps = {
-    className: "",
-    size: "32px",
+export class IconButtonAsLink extends React.Component {
+    render() {
+        return (
+            <Link className={"btn btn-ghost btn-square hover:text-accent"} to={this.props.to} onClick={this.props.onClick} title={this.props.title}>
+                {this.props.icon}
+            </Link>
+        )
+    }
+}
+export class IconButtonWithText extends React.Component {
+    render() {
+        return (
+            <button className={"btn btn-ghost gap-2 " + this.props.className} onClick={this.props.onClick}>
+                <div>
+                    {this.props.icon}
+                </div>
+                {this.props.label}
+            </button>
+        )
+    }
 }
 
 export class SearchTags extends React.Component {
@@ -621,7 +596,7 @@ export class SearchTags extends React.Component {
 
         return (
 
-        <div className={"btn btn-accent flex align-items-center swap-off gap-4"}>
+        <div className={"btn btn-accent flex items-center swap-off gap-4"}>
             {this.props.children}
             <i className="bi bi-x-circle" onClick={(e)=>this.onCancelClick(e)}></i>
         </div>
@@ -640,7 +615,7 @@ export class TagsBox extends React.Component {
     render() {
         if (React.Children.count(this.props.children) === 0) {
             return (
-                <div className={"d-flex align-items-center tagsBox flex-wrap justify-content-start " + this.props.className} onClick={this.props.onClick}>
+                <div className={"flex items-center tagsBox flex-wrap justify-start " + this.props.className} onClick={this.props.onClick}>
                     <h1>No Tags yet</h1>
                 </div>
             )
@@ -1309,4 +1284,265 @@ export class Shimmer extends React.Component{
             }}></div>
         )
     }
+}
+
+
+export class AddEntry extends React.Component{
+    state = {
+        courseToAdd: {},
+    }
+
+    onChange = (field, value) => {
+        var tempCourse = this.state.courseToAdd;
+        tempCourse[field] = value;
+        this.setState({
+            courseToAdd: tempCourse
+        })
+    }
+
+    uploadFile = async (file) => {
+        console.log(file);
+        const formData = new FormData();
+        formData.append("file", file.FileUrl);
+        
+        return await fetch("/api/File/Upload",
+            {
+                method: "POST",
+                body: formData,
+            }
+        ).then((res) => {
+            console.log(res);
+            return res.json();
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
+    createCourse = async (courseToAdd) => {
+
+        return fetch(this.props.settings.api + "Create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(courseToAdd),
+        }).then((res => {
+            return res.json();
+        })).catch((err) => {
+            console.log(err);
+        })
+    }
+
+    handleCourseCreation = async (e) => {
+        e.preventDefault();
+        var courseToAdd = this.state.courseToAdd;
+        var fileUploadFields = [];
+        
+        for(const field of Object.keys(this.props.fieldSettings)){
+            if (this.props.fieldSettings[field].type === "file") {
+                fileUploadFields.push(field);
+            }
+        }
+
+        for(const field of fileUploadFields){
+            try {
+                const res = await this.uploadFile(courseToAdd[field]);
+                if(res.success){
+                    courseToAdd[field] = res.data;
+                }
+            }catch(e){
+                this.props.requestError(e);
+            }
+        }
+        try {
+            const res = await this.createCourse(courseToAdd);
+            if(res.success){
+                this.props.requestRefresh();
+            }else{
+                this.props.requestError(res.message);
+            }
+        }catch(e){
+            this.props.requestError(e);
+        }
+    }
+
+    render(){
+        return (
+            <div className="container addEntry">
+                <form className={"grid md:grid-cols-2 grid-cols-1 gap-4"} onSubmit={this.handleCourseCreation}>
+                    {Object.keys(this.props.fieldSettings).map(
+                    (key, index) => {
+                        return (this.props.fieldSettings[key].primaryKey? "" : 
+                            <StdInput 
+                            label = {this.props.fieldSettings[key].displayLabel}
+                            type={this.props.fieldSettings[key].type}
+                            enabled = {true}
+                            fieldLabel={key}
+                            onChange = {this.onChange}
+                            options={this.props.fieldSettings[key].options}
+                            dateFormat = {this.props.fieldSettings[key].dateFormat}
+                            allowEmpty = {true}
+                            toolTip = {this.props.fieldSettings[key].toolTip}
+                            >
+                            </StdInput>)
+                    }
+                )}
+                <StdButton style={"md:col-span-2"} type={"submit"}>Submit</StdButton>
+                </form>
+                </div>
+        )
+    }
+}
+
+export class DeleteEntry extends React.Component{
+    state = {
+        courseToDelete: {},
+    }
+
+    onChange = (field, value) => {
+        var tempCourse = this.state.courseToDelete;
+        tempCourse[field] = value;
+        this.setState({
+            courseToDelete: tempCourse
+        })
+    }
+
+    deleteCourse = async (courseToDelete) => {
+        console.log(courseToDelete);
+        return fetch(this.props.settings.api + "Delete", {
+            method: "Delete",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(courseToDelete),
+        }).then((res => {
+            return res.json();
+        }));
+    }
+
+    handleCourseDeletion = async (e) => {
+        e.preventDefault();
+        await this.deleteCourse(this.state.courseToDelete).then((content) => {
+            if(content.success){
+                this.props.requestRefresh();
+            }else{
+                this.props.requestError(content.message);
+            }
+        })
+    }
+
+    render(){
+        return (
+            <div className="container flex justify-center">
+                <form className="w-96 flex flex-col gap-4" onSubmit={this.handleCourseDeletion}>
+                {Object.keys(this.props.fieldSettings).map(
+                    (key, index) => {
+                        return (this.props.fieldSettings[key].primaryKey? 
+                            <StdInput 
+                            label = {this.props.fieldSettings[key].displayLabel}
+                            type={"text"}
+                            enabled = {true}
+                            fieldLabel={key}
+                            onChange = {this.onChange}
+                            options={this.props.fieldSettings[key].options}
+                            dateFormat = {this.props.fieldSettings[key].dateFormat}
+                            >
+                            </StdInput> : "")
+                    }
+                )}
+                <StdButton style={"w-full"} type={"submit"}>Submit</StdButton>
+            
+                </form>
+            </div>
+        )
+    }
+}
+
+
+export class GenerateSpreadsheet extends React.Component{
+    state={
+        columns: [],
+        spreadsheetReady: false,
+    }
+    
+    componentDidMount(){
+        let columns = [];
+        for(var i = 0; i < Object.keys(this.props.fieldSettings).length; i++){
+            columns.push(
+                {
+                    label: Object.keys(this.props.fieldSettings)[i],
+                    key: Object.keys(this.props.fieldSettings)[i],
+                }
+            );
+        }
+        this.setState({
+            columns: columns
+        });
+    }
+
+    reOrderColumns = (index, direction) => {
+        var tempColumns = this.state.columns;
+        if(direction === "up"){
+            if(index > 0){
+                var temp = tempColumns[index];
+                tempColumns[index] = tempColumns[index - 1];
+                tempColumns[index - 1] = temp;
+            }
+        } else {
+            if(index < tempColumns.length - 1){
+                var temp = tempColumns[index];
+                tempColumns[index] = tempColumns[index + 1];
+                tempColumns[index + 1] = temp;
+            }
+        }
+        this.setState({
+            columns: tempColumns
+        });
+    }
+
+    generateSpreadsheet = () =>{
+        this.setState({
+            spreadsheetReady : false
+        })
+
+        // Fake loading time to show false sense of progress
+        setTimeout(() => {
+            this.setState({
+                spreadsheetReady : true
+            })}, 1000);
+    }
+
+    render(){
+        return (
+            <div className="container generate-spreadsheet">
+                <div className="column-order">
+                    {this.state.columns.map((column, index) => {
+                        return <div className="column">
+                            <div className="column-order-buttons">
+                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-up"></i>} onClick={() => this.reOrderColumns(index, "up")}></IconButton>
+                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-down"></i>} onClick={() => this.reOrderColumns(index, "down")}></IconButton>
+                            </div>
+                            <div className="column-name">{column.label}</div>
+                        </div>
+                    })}     
+                </div>
+                <div className="generate-actions">
+                    <StdButton onClick={() => this.generateSpreadsheet()}>
+                        Generate Spreadsheet
+                    </StdButton>
+
+                    {this.state.spreadsheetReady ?
+                    
+                    <CSVLink data={this.props.data} className={"forget-password"} headers={this.state.columns} filename={this.props.settings.title + ".csv"}>Download</CSVLink>
+                    :
+                    <div className="spinner-border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                    }    
+                </div>
+            </div>
+        )
+    }
+
+    
 }

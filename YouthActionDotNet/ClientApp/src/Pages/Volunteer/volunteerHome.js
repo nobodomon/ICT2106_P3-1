@@ -123,8 +123,11 @@ class VolunteerWorkList extends React.Component{
 
 class VolunteerWorkExpandibleRow extends React.Component{
     render(){
+        const startDate = moment(this.props.data["ShiftStart"])
+        const endDate = moment(this.props.data["ShiftEnd"])
+        const projectName = this.props.fieldSettings["projectId"].options.find((item)=>{return item.value == this.props.data["projectId"]}).label
         return(
-            <div className="collapse collapse-arrow rounded-box border" tabIndex={0}>
+            <div className="collapse collapse-arrow rounded-box border show" tabIndex={0}>
                 <input type="checkbox" className="peer"/> 
                 <div className="collapse-title flex flex-col">
                     {/* {Object.keys(this.props.fieldSettings).map((key,index)=>{
@@ -146,14 +149,23 @@ class VolunteerWorkExpandibleRow extends React.Component{
                             )
                         }
                     })} */}
-                    <div className="text-lg font-bold">
-                    Project: <span className="text-lg">{this.props.fieldSettings["projectId"].options.find((item)=>{return item.value == this.props.data["projectId"]}).label}</span>
+                    <div className="text-lg font-bold pb-4">
+                    Project: <span className="text-lg">{projectName}</span>
                     </div>
-                    <div className="text-lg font-bold">
-                    From: <span className="text-lg">{moment(this.props.data["ShiftStart"]).format("DD/MM/YYYY HH:mm a")}</span>
-                    </div>
-                    <div className="text-lg font-bold">
-                    To: <span className="text-lg">{moment(this.props.data["ShiftEnd"]).format("DD/MM/YYYY HH:mm a")}</span>
+                    <div className="flex max-w-max">
+                        <div className="stats stats-horizontal shadow">
+                            <div className="stat">
+                                
+                                <div class="stat-title">Shift start</div>
+                                <div className="stat-value text-primary">{startDate.format("DD MMM")}</div>
+                                <div className="stat-desc font-bold text-lg">{startDate.format("hh:mm a")}</div>
+                            </div>
+                            <div className="stat">
+                                <div class="stat-title">Shift end</div>
+                                <div className="stat-value text-primary">{endDate.format("DD MMM")}</div>
+                                <div className="stat-desc font-bold text-lg">{endDate.format("hh:mm a")}</div>
+                            </div>
+                        </div>    
                     </div>
                 </div>
                 <div className="collapse-content"> 
