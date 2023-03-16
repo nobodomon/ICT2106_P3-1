@@ -77,8 +77,7 @@ namespace YouthActionDotNet.Controllers
         [HttpPost("EmployeeExpense")]
         public async Task<ActionResult<string>> getEmployeeExpenseReport([FromBody] ExpensesReportQuery request)
         {
-            Console.WriteLine(request.startDate);
-            return await reportControl.GetEmployeeExpenseData(SqlDateTime.Parse(request.startDate), SqlDateTime.Parse(request.endDate), request.projectId);
+            return await reportControl.GetEmployeeExpenseData(request.startDate, request.endDate, request.projectId);
         }
 
         [HttpGet("Settings")]
