@@ -75,11 +75,17 @@ namespace YouthActionDotNet.Controllers
         }
 
         [HttpPost("EmployeeExpense")]
-        public async Task<ActionResult<string>> getEmployeeExpenseReport([FromBody] ExpensesReportQuery request)
+        public async Task<ActionResult<string>> getEmployeeExpenseReport([FromBody] ReportQuery request)
         {
-            Console.WriteLine(request.startDate);
-            return await reportControl.GetEmployeeExpenseData(SqlDateTime.Parse(request.startDate), SqlDateTime.Parse(request.endDate), request.projectId);
+            return await reportControl.GetEmployeeExpenseData(request.startDate, request.endDate, request.projectId);
         }
+
+        [HttpPost("VolunteerWork")]
+        public async Task<ActionResult<string>> getVolunteerWork([FromBody] ReportQuery request)
+        {
+            return await reportControl.GetVolunteerWorkData(request.startDate, request.endDate, request.projectId);
+        }
+
 
         [HttpGet("Settings")]
         public string Settings()

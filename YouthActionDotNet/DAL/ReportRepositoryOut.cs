@@ -21,39 +21,66 @@ namespace YouthActionDotNet.DAL
 
         private DbSet<Project> projectSet;
 
+        private DbSet<Volunteer> volunteerSet;
+
+        private DbSet<VolunteerWork> volunteerWorkSet;
         public ReportRepositoryOut(DBContext context) :
             base(context)
         {
             this.context = context;
             this.dbSet = context.Set<Report>();
+            this.volunteerSet = context.Set<Models.Volunteer>();
+            this.volunteerWorkSet = context.Set<Models.VolunteerWork>();
             this.employeeSet = context.Set<Models.Employee>();
             this.expenseSet = context.Set<Models.Expense>();
             this.projectSet = context.Set<Models.Project>();
         }
 
-        public async Task<IList> getEmployeeExpenseReportData(SqlDateTime  reportStartDate, SqlDateTime reportEndDate, string projectId)
+        public async Task<IList> getEmployeeExpenseReportData(string  reportStartDate, string reportEndDate, string projectId)
         {
             var employeeExpenseArray = await employeeSet.Join(expenseSet, employee => employee.UserId, expense => expense.user.UserId, (employee, expense) => new { employee, expense })
-                .Where(x => x.expense.ProjectId == projectId)
-                // .Where(x => x.expense.DateOfSubmission >= reportStartDate && x.expense.DateOfSubmission <= reportEndDate)
-                .Select(x => new EmployeeExpenseReport
+                .Where(x => x.expense.DateOfSubmission >= DateTime.Parse(reportStartDate) && x.expense.DateOfSubmission <= DateTime.Parse(reportEndDate))
+                .Where(y => y.expense.ProjectId == projectId)
+                .Select(z => new EmployeeExpenseReport
                 {
-                    EmployeeName = x.employee.username,
-                    EmployeeNationalId = x.employee.EmployeeNationalId,
-                    DateJoined = x.employee.DateJoined,
-                    EmployeeType = x.employee.EmployeeType,
-                    EmployeeRole = x.employee.EmployeeRole,
-                    ExpenseId = x.expense.ExpenseId,
-                    ExpenseAmount = x.expense.ExpenseAmount,
-                    ExpenseDescription = x.expense.ExpenseDesc,
-                    ExpenseReceipt = x.expense.ExpenseReceipt,
-                    Status = x.expense.Status,
-                    DateOfExpense = x.expense.DateOfExpense,
-                    DateOfSubmission = x.expense.DateOfSubmission,
-                    DateOfReimbursement = x.expense.DateOfReimbursement,
-                    ApprovalName = x.expense.user.username
+                    EmployeeName = z.employee.username,
+                    EmployeeNationalId = z.employee.EmployeeNationalId,
+                    DateJoined = z.employee.DateJoined,
+                    EmployeeType = z.employee.EmployeeType,
+                    EmployeeRole = z.employee.EmployeeRole,
+                    ExpenseId = z.expense.ExpenseId,
+                    ExpenseAmount = z.expense.ExpenseAmount,
+                    ExpenseDescription = z.expense.ExpenseDesc,
+                    ExpenseReceipt = z.expense.ExpenseReceipt,
+                    Status = z.expense.Status,
+                    DateOfExpense = z.expense.DateOfExpense,
+                    DateOfSubmission = z.expense.DateOfSubmission,
+                    DateOfReimbursement = z.expense.DateOfReimbursement,
+                    ApprovalName = z.expense.user.username
                 }).ToListAsync();
             return employeeExpenseArray;
+        }
+        public async Task<IList> getVolunteerWorkReportData(string reportStartDate, string reportEndDate, string projectId){
+            Console.WriteLine(projectId);
+            Console.WriteLine(reportStartDate);
+            var volunteerWorkArray = await volunteerSet.Join(volunteerWorkSet, volunteer => volunteer.UserId, volunteerWork => volunteerWork.volunteer.UserId, (volunteer, volunteerWork) => new { volunteer, volunteerWork })
+                .Where(x => x.volunteerWork.project.ProjectStartDate >= DateTime.Parse(reportStartDate) && x.volunteerWork.project.ProjectEndDate >= DateTime.Parse(reportEndDate))
+                .Where(y => y.volunteerWork.projectId == projectId)
+                .Select(z => new VolunteerWorkReport
+                {
+                    volunteerNationalId = z.volunteer.VolunteerNationalId,
+                    volunteerName = z.volunteer.username,
+                    volunteerDateJoined = z.volunteer.VolunteerDateJoined,
+                    volunteerQualifications = z.volunteer.Qualifications,
+                    volunteerCriminalHistory = z.volunteer.CriminalHistory,
+                    volunteerCriminalHistoryDesc = z.volunteer.CriminalHistoryDesc,
+                    shiftStart = z.volunteerWork.ShiftStart,
+                    shiftEnd = z.volunteerWork.ShiftEnd,
+                    supervisingEmployee = z.volunteerWork.SupervisingEmployee,
+                    projectId = z.volunteerWork.projectId
+
+                }).ToListAsync();
+            return volunteerWorkArray;
         }
     }
 }

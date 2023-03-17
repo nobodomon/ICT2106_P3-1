@@ -80,7 +80,7 @@ namespace YouthActionDotNet.Models
         public int pageSize { get; set; }
     }
 
-    public class ExpensesReportQuery
+    public class ReportQuery
     {
         public string startDate { get; set; }
         public string endDate { get; set; }

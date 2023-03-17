@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouthActionDotNet.Data;
 
@@ -10,9 +11,11 @@ using YouthActionDotNet.Data;
 namespace YouthActionDotNet.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230316094843_reportDateTime")]
+    partial class reportDateTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -138,19 +141,19 @@ namespace YouthActionDotNet.Migrations
                     b.Property<double>("ProjectBudget")
                         .HasColumnType("REAL");
 
-                    b.Property<DateTime>("ProjectCompletionDate")
+                    b.Property<string>("ProjectCompletionDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectDescription")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ProjectEndDate")
+                    b.Property<string>("ProjectEndDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectName")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ProjectStartDate")
+                    b.Property<string>("ProjectStartDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectStatus")

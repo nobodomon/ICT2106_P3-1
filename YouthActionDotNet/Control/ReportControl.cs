@@ -127,9 +127,15 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, data = reports, message = "Reports Successfully Retrieved" });
         }
 
-        public async Task<ActionResult<string>> GetEmployeeExpenseData(SqlDateTime reportStartDate, SqlDateTime reportEndDate, string projectId)
+        public async Task<ActionResult<string>> GetEmployeeExpenseData(string reportStartDate, string reportEndDate, string projectId)
         {
             var data = await ReportRepositoryOut.getEmployeeExpenseReportData(reportStartDate, reportEndDate, projectId);
+            return JsonConvert.SerializeObject(new { success = true, data = data, message = "Reports Successfully Retrieved" });
+        }
+
+        public async Task<ActionResult<string>> GetVolunteerWorkData(string reportStartDate, string reportEndDate, string projectId)
+        {
+            var data = await ReportRepositoryOut.getVolunteerWorkReportData(reportStartDate, reportEndDate, projectId);
             return JsonConvert.SerializeObject(new { success = true, data = data, message = "Reports Successfully Retrieved" });
         }
 
