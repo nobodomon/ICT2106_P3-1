@@ -6,7 +6,7 @@ namespace YouthActionDotNet.Models
 {
     public class VolunteerWork
     {
-        VolunteerWork()
+        public VolunteerWork()
         {
             this.VolunteerWorkId = Guid.NewGuid().ToString();
         }

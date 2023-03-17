@@ -16,11 +16,11 @@ namespace YouthActionDotNet.Models
 
         public string ProjectDescription { get; set; }
 
-        public string ProjectStartDate { get; set; }
+        public DateTime ProjectStartDate { get; set; }
 
-        public string ProjectEndDate { get; set; }
+        public DateTime ProjectEndDate { get; set; }
 
-        public string ProjectCompletionDate { get; set; }
+        public DateTime ProjectCompletionDate { get; set; }
 
         public string ProjectStatus { get; set; }
 

@@ -21,11 +21,16 @@ namespace YouthActionDotNet.DAL
 
         private DbSet<Project> projectSet;
 
+        private DbSet<Volunteer> volunteerSet;
+
+        private DbSet<VolunteerWork> volunteerWorkSet;
         public ReportRepositoryOut(DBContext context) :
             base(context)
         {
             this.context = context;
             this.dbSet = context.Set<Report>();
+            this.volunteerSet = context.Set<Models.Volunteer>();
+            this.volunteerWorkSet = context.Set<Models.VolunteerWork>();
             this.employeeSet = context.Set<Models.Employee>();
             this.expenseSet = context.Set<Models.Expense>();
             this.projectSet = context.Set<Models.Project>();
@@ -54,6 +59,28 @@ namespace YouthActionDotNet.DAL
                     ApprovalName = z.expense.user.username
                 }).ToListAsync();
             return employeeExpenseArray;
+        }
+        public async Task<IList> getVolunteerWorkReportData(string reportStartDate, string reportEndDate, string projectId){
+            Console.WriteLine(projectId);
+            Console.WriteLine(reportStartDate);
+            var volunteerWorkArray = await volunteerSet.Join(volunteerWorkSet, volunteer => volunteer.UserId, volunteerWork => volunteerWork.volunteer.UserId, (volunteer, volunteerWork) => new { volunteer, volunteerWork })
+                .Where(x => x.volunteerWork.project.ProjectStartDate >= DateTime.Parse(reportStartDate) && x.volunteerWork.project.ProjectEndDate >= DateTime.Parse(reportEndDate))
+                .Where(y => y.volunteerWork.projectId == projectId)
+                .Select(z => new VolunteerWorkReport
+                {
+                    volunteerNationalId = z.volunteer.VolunteerNationalId,
+                    volunteerName = z.volunteer.username,
+                    volunteerDateJoined = z.volunteer.VolunteerDateJoined,
+                    volunteerQualifications = z.volunteer.Qualifications,
+                    volunteerCriminalHistory = z.volunteer.CriminalHistory,
+                    volunteerCriminalHistoryDesc = z.volunteer.CriminalHistoryDesc,
+                    shiftStart = z.volunteerWork.ShiftStart,
+                    shiftEnd = z.volunteerWork.ShiftEnd,
+                    supervisingEmployee = z.volunteerWork.SupervisingEmployee,
+                    projectId = z.volunteerWork.projectId
+
+                }).ToListAsync();
+            return volunteerWorkArray;
         }
     }
 }

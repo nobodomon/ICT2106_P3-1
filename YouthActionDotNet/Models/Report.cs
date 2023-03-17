@@ -15,11 +15,11 @@ namespace YouthActionDotNet.Models
 
         public string ReportName { get; set; }
 
-        public string ReportDateCreation { get; set; }
+        public DateTime ReportDateCreation { get; set; }
 
-        public string ReportStartDate { get; set; }
+        public DateTime ReportStartDate { get; set; }
 
-        public string ReportEndDate { get; set; }
+        public DateTime ReportEndDate { get; set; }
 
         public string FileId { get; set; }
 
