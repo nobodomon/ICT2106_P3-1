@@ -17,9 +17,9 @@ namespace YouthActionDotNet.Models
 
         public string volunteerCriminalHistoryDesc { get; set; }
 
-        public string shiftStart { get; set; }
+        public DateTime shiftStart { get; set; }
 
-        public string shiftEnd { get; set; }
+        public DateTime shiftEnd { get; set; }
 
         public string supervisingEmployee { get; set; }
 

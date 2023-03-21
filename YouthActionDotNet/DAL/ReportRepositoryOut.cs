@@ -64,10 +64,9 @@ namespace YouthActionDotNet.DAL
             Console.WriteLine(projectId);
             Console.WriteLine(reportStartDate);
             var volunteerWorkArray = await volunteerSet.Join(volunteerWorkSet, volunteer => volunteer.UserId, volunteerWork => volunteerWork.volunteer.UserId, (volunteer, volunteerWork) => new { volunteer, volunteerWork })
-                .Where(x => x.volunteerWork.project.ProjectStartDate >= DateTime.Parse(reportStartDate) && x.volunteerWork.project.ProjectEndDate >= DateTime.Parse(reportEndDate))
+                .Where(x => x.volunteerWork.ShiftStart >= DateTime.Parse(reportStartDate) && x.volunteerWork.ShiftEnd <= DateTime.Parse(reportEndDate))
                 .Where(y => y.volunteerWork.projectId == projectId)
-                .Select(z => new VolunteerWorkReport
-                {
+                .Select(z => new {
                     volunteerNationalId = z.volunteer.VolunteerNationalId,
                     volunteerName = z.volunteer.username,
                     volunteerDateJoined = z.volunteer.VolunteerDateJoined,
@@ -76,9 +75,8 @@ namespace YouthActionDotNet.DAL
                     volunteerCriminalHistoryDesc = z.volunteer.CriminalHistoryDesc,
                     shiftStart = z.volunteerWork.ShiftStart,
                     shiftEnd = z.volunteerWork.ShiftEnd,
-                    supervisingEmployee = z.volunteerWork.SupervisingEmployee,
-                    projectId = z.volunteerWork.projectId
-
+                    supervisingEmployee = z.volunteerWork.employee.username,
+                    projectId = z.volunteerWork.project.ProjectName
                 }).ToListAsync();
             return volunteerWorkArray;
         }

@@ -170,7 +170,5 @@ namespace YouthActionDotNet.Control
 
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
-
-
     }
 }

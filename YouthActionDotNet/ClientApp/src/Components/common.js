@@ -743,21 +743,33 @@ export class MultiStepBox extends React.Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="w-full">
                 {this.props.children.map((child, index) => {
                     if (React.isValidElement(child) && index === this.state.currentStep) {
                         return (
-                            <div key={index} className={"step " + (index === this.state.currentStep ? "active" : "")}>
+                            <div key={index} className={"step w-full " + (index === this.state.currentStep ? "active" : "")}>
                                 {React.cloneElement(child, { nextStep: this.nextStep, prevStep: this.prevStep, setStep: this.setStep })}
                             </div>
                         )
                     } else {
-                        return <div key={index} className={"step  i " + (index === this.state.currentStep ? "active" : "")} nextStep={this.nextStep} prevStep={this.prevStep} setStep={this.setStep}>
+                        return <div key={index} className={"step i w-full " + (index === this.state.currentStep ? "active" : "")} nextStep={this.nextStep} prevStep={this.prevStep} setStep={this.setStep}>
                         </div>
                     }
                 })}
             </div>
         )
+    }
+}
+
+export class Stepv2 extends React.Component {
+    render(){
+        if(this.props.step){
+            return(
+                this.props.children
+            )
+        }else{
+            return null
+        }
     }
 }
 
