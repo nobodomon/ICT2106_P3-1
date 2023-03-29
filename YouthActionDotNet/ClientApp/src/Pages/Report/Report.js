@@ -90,7 +90,7 @@ export default class Report extends React.Component {
                         
                         <button className="btn btn-primary" onClick={()=>{
                             this.onSelectReportType(0);
-                        }}>Volutneer Work</button>
+                        }}>Voluntneer Work</button>
                         <button className="btn btn-primary" onClick={()=>{
                             this.onSelectReportType(1);
                         }}>Employee Expense</button>
