@@ -8,10 +8,11 @@ using Newtonsoft.Json;
 using YouthActionDotNet.Controllers;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Data;
+using YouthActionDotNet.Interfaces;
 using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Control{
-    public class PermissionsControl:  IUserInterfaceCRUD<Permissions>
+    public class PermissionsControl:  IPermission
     {
         private PermissionsRepositoryIn PermissionRepositoryIn;
         private PermissionsRepositoryOut PermissionRepositoryOut;
@@ -20,6 +21,12 @@ namespace YouthActionDotNet.Control{
         {
             PermissionRepositoryIn = new PermissionsRepositoryIn(context);
             PermissionRepositoryOut = new PermissionsRepositoryOut(context);
+        }
+
+        public async Task<ActionResult<string>> All(SearchRequest request)
+        {
+            var permissions = await PermissionRepositoryOut.GetAllAsync();
+            return JsonConvert.SerializeObject(new { success = true, data = permissions, message = "Permissions Successfully Retrieved" });
         }
         public async Task<ActionResult<string>> All()
         {

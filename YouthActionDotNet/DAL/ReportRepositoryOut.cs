@@ -38,9 +38,9 @@ namespace YouthActionDotNet.DAL
 
         public async Task<IList> getEmployeeExpenseReportData(string  reportStartDate, string reportEndDate, string projectId)
         {
-            var employeeExpenseArray = await employeeSet.Join(expenseSet, employee => employee.UserId, expense => expense.user.UserId, (employee, expense) => new { employee, expense })
-                .Where(x => x.expense.DateOfSubmission >= DateTime.Parse(reportStartDate) && x.expense.DateOfSubmission <= DateTime.Parse(reportEndDate))
-                .Where(y => y.expense.ProjectId == projectId)
+            var employeeExpenseArray = await employeeSet.Join(expenseSet, employee => employee.UserId, expense => expense.submission.user.UserId, (employee, expense) => new { employee, expense })
+                .Where(x => x.expense.submission.DateOfSubmission >= DateTime.Parse(reportStartDate) && x.expense.submission.DateOfSubmission <= DateTime.Parse(reportEndDate))
+                .Where(y => y.expense.submission.ProjectId == projectId)
                 .Select(z => new EmployeeExpenseReport
                 {
                     EmployeeName = z.employee.username,
@@ -49,14 +49,14 @@ namespace YouthActionDotNet.DAL
                     EmployeeType = z.employee.EmployeeType,
                     EmployeeRole = z.employee.EmployeeRole,
                     ExpenseId = z.expense.ExpenseId,
-                    ExpenseAmount = z.expense.ExpenseAmount,
-                    ExpenseDescription = z.expense.ExpenseDesc,
-                    ExpenseReceipt = z.expense.ExpenseReceipt,
-                    Status = z.expense.Status,
-                    DateOfExpense = z.expense.DateOfExpense,
-                    DateOfSubmission = z.expense.DateOfSubmission,
-                    DateOfReimbursement = z.expense.DateOfReimbursement,
-                    ApprovalName = z.expense.user.username
+                    ExpenseAmount = z.expense.submission.ExpenseAmount,
+                    ExpenseDescription = z.expense.submission.ExpenseDesc,
+                    ExpenseReceipt = z.expense.submission.ExpenseReceipt,
+                    Status = z.expense.submission.Status,
+                    DateOfExpense = z.expense.submission.DateOfExpense,
+                    DateOfSubmission = z.expense.submission.DateOfSubmission,
+                    DateOfReimbursement = z.expense.Reimbursement.DateOfReimbursement,
+                    ApprovalName = z.expense.submission.user.username
                 }).ToListAsync();
             return employeeExpenseArray;
         }

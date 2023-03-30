@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Data;
+using YouthActionDotNet.Interfaces;
 using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Control{
-    public class FileControl{
-        
+    public class FileControl: IFile
+    {
         private FileRepositoryIn FileRepositoryIn;
         private FileRepositoryOut FileRepositoryOut;
         public FileControl(DBContext context){

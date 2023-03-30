@@ -49,7 +49,7 @@ namespace YouthActionDotNet.Data{
             .WithMany()
             .HasForeignKey(e => e.ServiceCenterId);
         modelBuilder.Entity<Expense>().ToTable("Expense")
-            .HasOne(e => e.project)
+            .HasOne(e => e.submission.project)
             .WithMany()
             .HasForeignKey(e => e.ProjectId);
         modelBuilder.Entity<Expense>().ToTable("Expense")
@@ -59,7 +59,7 @@ namespace YouthActionDotNet.Data{
         modelBuilder.Entity<Expense>().ToTable("Expense")
             .HasOne(e => e.ExpenseReceiptFile)
             .WithMany()
-            .HasForeignKey(e => e.ExpenseReceipt);
+            .HasForeignKey(e => e.ExpenseReceiptFile);
         modelBuilder.Entity<File>().ToTable("File");
         modelBuilder.Entity<Permissions>().ToTable("Permissions");
         modelBuilder.Entity<Donations>().ToTable("Donations")

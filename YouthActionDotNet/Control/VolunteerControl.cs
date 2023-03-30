@@ -8,11 +8,11 @@ using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 using Newtonsoft.Json;
 using YouthActionDotNet.DAL;
-using YouthActionDotNet.Controllers;
+using YouthActionDotNet.Interfaces;
 
 namespace YouthActionDotNet.Control
 {
-    public class VolunteerControl : IUserInterfaceCRUD<Volunteer>
+    public class VolunteerControl : IVolunteer
     {
         private GenericRepositoryIn<Volunteer> VolunteerRepositoryIn;
         private GenericRepositoryOut<Volunteer> VolunteerRepositoryOut;
@@ -172,6 +172,12 @@ namespace YouthActionDotNet.Control
         }
 
         public async Task<ActionResult<string>> All()
+        {
+            var volunteers = await VolunteerRepositoryOut.GetAllAsync();
+            return JsonConvert.SerializeObject(new { success = true, data = volunteers, message = "Volunteers Successfully Retrieved" }, settings);
+        }
+
+        public async Task<ActionResult<string>> All([FromBody] SearchRequest request)
         {
             var volunteers = await VolunteerRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = volunteers, message = "Volunteers Successfully Retrieved" }, settings);

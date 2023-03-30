@@ -14,5 +14,12 @@ namespace YouthActionDotNet.Models
         public Submission submission { get; set; }
 
         public Reimbursement Reimbursement { get; set; }
+        public object user { get; internal set; }
+
+        public object ProjectId { get; internal set; }
+
+        public object ApprovalId { get; internal set;}
+
+        public object ExpenseReceiptFile { get; internal set; }
     }
 }

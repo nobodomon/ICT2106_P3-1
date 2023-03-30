@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
@@ -8,11 +9,12 @@ using Newtonsoft.Json;
 using YouthActionDotNet.Controllers;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Data;
+using YouthActionDotNet.Interfaces;
 using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Control
 {
-    public class ReportControl : IUserInterfaceCRUD<Report>
+    public class ReportControl : IReport
     {
         private GenericRepositoryIn<Report> ReportRepositoryIn;
         private ReportRepositoryOut ReportRepositoryOut;
@@ -127,18 +129,6 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, data = reports, message = "Reports Successfully Retrieved" });
         }
 
-        public async Task<ActionResult<string>> GetEmployeeExpenseData(string reportStartDate, string reportEndDate, string projectId)
-        {
-            var data = await ReportRepositoryOut.getEmployeeExpenseReportData(reportStartDate, reportEndDate, projectId);
-            return JsonConvert.SerializeObject(new { success = true, data = data, message = "Reports Successfully Retrieved" });
-        }
-
-        public async Task<ActionResult<string>> GetVolunteerWorkData(string reportStartDate, string reportEndDate, string projectId)
-        {
-            var data = await ReportRepositoryOut.getVolunteerWorkReportData(reportStartDate, reportEndDate, projectId);
-            return JsonConvert.SerializeObject(new { success = true, data = data, message = "Reports Successfully Retrieved" });
-        }
-
         public string Settings()
         {
             Settings settings = new Settings();
@@ -169,6 +159,17 @@ namespace YouthActionDotNet.Control
             });
 
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
+        }
+
+        public async Task<ActionResult<string>> getEmployeeExpenseReport(ReportQuery request)
+        {
+            var data = await ReportRepositoryOut.getEmployeeExpenseReportData(request.startDate, request.endDate, request.projectId);
+            return JsonConvert.SerializeObject(new { success = true, data = data, message = "Reports Successfully Retrieved" });        }
+
+        public async Task<ActionResult<string>> getVolunteerWork(ReportQuery request)
+        {
+               var data = await ReportRepositoryOut.getVolunteerWorkReportData(request.startDate, request.endDate, request.projectId);
+            return JsonConvert.SerializeObject(new { success = true, data = data, message = "Reports Successfully Retrieved" });
         }
     }
 }
